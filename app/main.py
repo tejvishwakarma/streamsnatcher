@@ -4,7 +4,7 @@ FastAPI Backend with WebRTC Signaling Server
 Production-Ready Version
 """
 
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response, Query
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -539,7 +539,7 @@ ALLOWED_WS_TYPES = {"register", "offer", "answer", "ice-candidate", "ping", "req
 MAX_WS_MESSAGE_SIZE = 65536  # 64KB limit for signaling messages
 
 @app.websocket("/ws/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: str, token: str = Query(default=None)):
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
     """WebSocket signaling server for WebRTC peer connections"""
     
     # Validate session_id format
@@ -547,25 +547,26 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, token: str =
         await websocket.close(code=1008, reason="Invalid session ID")
         return
     
+    # Check if session is full before accepting
+    if session_id in sessions and len(sessions[session_id]["connections"]) >= MAX_PEERS_PER_SESSION:
+        await websocket.close(code=1008, reason="Session full")
+        logger.warning(f"⚠️ Session {session_id} full, connection rejected")
+        return
+    
+    # Accept connection first (required before any send/close in FastAPI)
+    await websocket.accept()
+    
     # Authenticate with join token
+    token = websocket.query_params.get("token")
     session = sessions.get(session_id)
-    if session and token != session.get("join_token"):
-        await websocket.close(code=1008, reason="Unauthorized")
+    if session and session.get("join_token") and token != session.get("join_token"):
         logger.warning(f"⚠️ Unauthorized WebSocket attempt for session {session_id}")
+        await websocket.close(code=1008, reason="Unauthorized")
         return
 
     # Initialize session if not exists
     if session_id not in sessions:
         sessions[session_id] = {"connections": [], "created_at": time.time()}
-    
-    # Check if session is full
-    if len(sessions[session_id]["connections"]) >= MAX_PEERS_PER_SESSION:
-        await websocket.close(code=1008, reason="Session full")
-        logger.warning(f"⚠️ Session {session_id} full, connection rejected")
-        return
-    
-    # Accept and add to connections
-    await websocket.accept()
     sessions[session_id]["connections"].append(websocket)
     
     # Get total count
