@@ -882,18 +882,29 @@ async function sendFileChunks(fileTransfer, connectedPeers) {
 
     while (offset < file.size && !isCancelling) {
         for (const { dataChannel } of connectedPeers) {
+            if (isCancelling) break;
             if (dataChannel.readyState !== 'open') continue;
 
             // Wait for buffer to drain using event (not polling)
-            while (dataChannel.bufferedAmount > MAX_BUFFER_AMOUNT) {
+            while (dataChannel.bufferedAmount > MAX_BUFFER_AMOUNT && !isCancelling) {
                 await new Promise(resolve => {
                     dataChannel.bufferedAmountLowThreshold = LOW_BUFFER_THRESHOLD;
+                    const checkCancel = setInterval(() => {
+                        if (isCancelling) {
+                            clearInterval(checkCancel);
+                            dataChannel.onbufferedamountlow = null;
+                            resolve();
+                        }
+                    }, 100);
                     dataChannel.onbufferedamountlow = () => {
+                        clearInterval(checkCancel);
                         dataChannel.onbufferedamountlow = null;
                         resolve();
                     };
                 });
             }
+
+            if (isCancelling) break;
 
             const end = Math.min(offset + CHUNK_SIZE, file.size);
             const chunk = file.slice(offset, end);
@@ -903,15 +914,24 @@ async function sendFileChunks(fileTransfer, connectedPeers) {
             try {
                 dataChannel.send(arrayBuffer);
             } catch (sendError) {
+                if (isCancelling) break;
                 // Queue full — wait for drain and retry
                 await new Promise(resolve => {
                     dataChannel.bufferedAmountLowThreshold = LOW_BUFFER_THRESHOLD;
+                    const checkCancel = setInterval(() => {
+                        if (isCancelling) {
+                            clearInterval(checkCancel);
+                            dataChannel.onbufferedamountlow = null;
+                            resolve();
+                        }
+                    }, 100);
                     dataChannel.onbufferedamountlow = () => {
+                        clearInterval(checkCancel);
                         dataChannel.onbufferedamountlow = null;
                         resolve();
                     };
                 });
-                dataChannel.send(arrayBuffer);
+                if (!isCancelling) dataChannel.send(arrayBuffer);
             }
 
             offset += arrayBuffer.byteLength;
@@ -937,6 +957,7 @@ async function sendFileChunks(fileTransfer, connectedPeers) {
     if (isCancelling) {
         isCancelling = false;
         fileTransfer.status = 'cancelled';
+        console.log(`🚫 Transfer cancelled: ${file.name}`);
         if (fileElement) fileElement.remove();
     } else {
         // Send completion message
