@@ -1518,7 +1518,7 @@ function updatePeerCount(count) {
     }
 
     if (peerCountDisplay) {
-        const othersConnected = Math.max(0, totalInSession + 1);
+        const othersConnected = Math.max(0, totalInSession - 1);
         if (othersConnected === 0) {
             peerCountDisplay.textContent = `Waiting for peers to join...`;
         } else {
