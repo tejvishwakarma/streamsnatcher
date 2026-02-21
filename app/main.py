@@ -4,13 +4,13 @@ FastAPI Backend with WebRTC Signaling Server
 Production-Ready Version
 """
 
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response, Query
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -135,31 +135,17 @@ sessions = {}
 
 # ==================== MODELS ====================
 class ContactForm(BaseModel):
-    name: str
-    email: str
-    subject: str
-    message: str
+    name: str = Field(..., min_length=1, max_length=100)
+    email: str = Field(..., min_length=3, max_length=254)
+    subject: str = Field(..., min_length=1, max_length=200)
+    message: str = Field(..., min_length=1, max_length=5000)
 
+    @field_validator('email')
     @classmethod
-    def validate_lengths(cls, values):
-        return values
-
-    class Config:
-        # Enforce max lengths via field validators
-        pass
-
-# Validate contact form fields
-def validate_contact_form(form: ContactForm):
-    """Validate contact form field lengths and basic email format"""
-    if len(form.name) > 100 or len(form.name) < 1:
-        return "Name must be 1-100 characters"
-    if len(form.subject) > 200 or len(form.subject) < 1:
-        return "Subject must be 1-200 characters"
-    if len(form.message) > 5000 or len(form.message) < 1:
-        return "Message must be 1-5000 characters"
-    if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', form.email):
-        return "Invalid email address"
-    return None
+    def validate_email(cls, v):
+        if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', v):
+            raise ValueError('Invalid email address')
+        return v
 
 class QRRequest(BaseModel):
     url: str
@@ -483,10 +469,11 @@ async def create_session(request: Request):
     """Create a new transfer session with unique ID and QR code"""
     try:
         session_id = secrets.token_urlsafe(16)
-        sessions[session_id] = {"connections": []}
+        join_token = secrets.token_urlsafe(16)
+        sessions[session_id] = {"connections": [], "join_token": join_token, "created_at": time.time()}
         
         # Always use BASE_URL for production deployment
-        session_url = f"{BASE_URL}/session/{session_id}"
+        session_url = f"{BASE_URL}/session/{session_id}?token={join_token}"
         
         qr_code = generate_qr_code(session_url)
         
@@ -496,7 +483,8 @@ async def create_session(request: Request):
         return {
             "session_id": session_id,
             "session_url": session_url,
-            "qr_code": qr_code
+            "qr_code": qr_code,
+            "join_token": join_token
         }
     except Exception as e:
         logger.error(f"❌ Failed to create session: {e}")
@@ -530,13 +518,6 @@ async def generate_qr(request: Request, qr_data: QRRequest):
 async def submit_contact(request: Request, form: ContactForm):
     """Handle contact form submissions"""
     try:
-        # Validate input
-        validation_error = validate_contact_form(form)
-        if validation_error:
-            return JSONResponse(
-                status_code=400,
-                content={"status": "error", "message": validation_error}
-            )
         logger.info(f"📧 Contact form: {form.name[:50]} ({form.email[:50]}) - {form.subject[:50]}")
         
         # TODO: Implement email sending (SendGrid, AWS SES, etc.)
@@ -554,13 +535,23 @@ async def submit_contact(request: Request, form: ContactForm):
         )
 
 # ==================== WEBSOCKET - SIGNALING SERVER ====================
+ALLOWED_WS_TYPES = {"register", "offer", "answer", "ice-candidate", "ping", "request-peer-count"}
+MAX_WS_MESSAGE_SIZE = 65536  # 64KB limit for signaling messages
+
 @app.websocket("/ws/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: str):
+async def websocket_endpoint(websocket: WebSocket, session_id: str, token: str = Query(default=None)):
     """WebSocket signaling server for WebRTC peer connections"""
     
     # Validate session_id format
     if not re.match(r'^[a-zA-Z0-9_-]{8,64}$', session_id):
         await websocket.close(code=1008, reason="Invalid session ID")
+        return
+    
+    # Authenticate with join token
+    session = sessions.get(session_id)
+    if session and token != session.get("join_token"):
+        await websocket.close(code=1008, reason="Unauthorized")
+        logger.warning(f"⚠️ Unauthorized WebSocket attempt for session {session_id}")
         return
 
     # Initialize session if not exists
@@ -606,20 +597,32 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     try:
         while True:
             data = await websocket.receive_text()
+            
+            # M1: Reject oversized messages
+            if len(data) > MAX_WS_MESSAGE_SIZE:
+                logger.warning(f"⚠️ Oversized message rejected from session {session_id}")
+                continue
+            
             message = json.loads(data)
+            msg_type = message.get("type")
             
             # Handle ping
-            if message.get("type") == "ping":
+            if msg_type == "ping":
                 await websocket.send_json({"type": "pong"})
                 continue
             
             # Handle peer count requests
-            if message.get("type") == "request-peer-count":
+            if msg_type == "request-peer-count":
                 await websocket.send_json({
                     "type": "peer-joined",
                     "peer_count": len(sessions[session_id]["connections"]),
                     "max_peers": MAX_PEERS_PER_SESSION
                 })
+                continue
+            
+            # H1: Only relay allowed message types
+            if msg_type not in ALLOWED_WS_TYPES:
+                logger.warning(f"⚠️ Rejected unknown message type: {msg_type}")
                 continue
             
             # Relay to all other peers
@@ -803,17 +806,28 @@ async def startup_event():
     asyncio.create_task(cleanup_stale_sessions())
 
 async def cleanup_stale_sessions():
-    """Remove sessions older than 1 hour"""
+    """Remove sessions older than 1 hour, force-close after 2 hours"""
     while True:
         await asyncio.sleep(300)  # Check every 5 minutes
         now = time.time()
-        expired = [sid for sid, s in sessions.items()
-                   if now - s.get("created_at", 0) > 3600 and len(s["connections"]) == 0]
-        for sid in expired:
+        to_delete = []
+        for sid, s in sessions.items():
+            age = now - s.get("created_at", 0)
+            # Force-close sessions older than 2 hours regardless of connections
+            if age > 7200:
+                for conn in s["connections"]:
+                    try:
+                        await conn.close(code=1001, reason="Session expired")
+                    except Exception:
+                        pass
+                to_delete.append(sid)
+            elif age > 3600 and len(s["connections"]) == 0:
+                to_delete.append(sid)
+        for sid in to_delete:
             del sessions[sid]
             logger.info(f"🗑️ Expired stale session: {sid}")
-        if expired:
-            logger.info(f"📊 Cleaned up {len(expired)} stale sessions")
+        if to_delete:
+            logger.info(f"📊 Cleaned up {len(to_delete)} stale sessions")
 
 @app.on_event("shutdown")
 async def shutdown_event():

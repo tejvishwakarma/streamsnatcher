@@ -5,7 +5,7 @@
 
 set -e
 
-APP_DIR="/opt/streamsnatcher"
+APP_DIR="/home/streamsnatcher/htdocs/streamsnatcher.com"
 REPO_BRANCH="main"
 LOG_FILE="/var/log/streamsnatcher-deploy.log"
 

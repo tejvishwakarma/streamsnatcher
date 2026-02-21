@@ -16,5 +16,5 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /opt/streamsnatcher
+            cd /home/streamsnatcher/htdocs/streamsnatcher.com
             bash deploy.sh

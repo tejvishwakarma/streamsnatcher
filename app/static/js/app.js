@@ -38,6 +38,7 @@ function escapeHtml(str) {
 // WebSocket & Session
 let ws = null;
 let sessionId = null;
+let joinToken = null;
 let isSessionCreator = false;
 let myPeerId = generateId();
 
@@ -92,6 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pathParts = window.location.pathname.split('/');
     if (pathParts[1] === 'session' && pathParts[2]) {
         sessionId = pathParts[2];
+        // Extract join token from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        joinToken = urlParams.get('token');
         joinSession(sessionId);
     }
 });
@@ -191,6 +195,7 @@ async function createSession() {
         const data = await response.json();
 
         sessionId = data.session_id;
+        joinToken = data.join_token;
         isSessionCreator = true;
         sessionUrlInput.value = data.session_url;
         qrCodeDisplay.innerHTML = `<img src="${data.qr_code}" alt="Session QR">`;
@@ -425,7 +430,10 @@ function connectWebSocket() {
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/${sessionId}`;
+    let wsUrl = `${protocol}//${window.location.host}/ws/${sessionId}`;
+    if (joinToken) {
+        wsUrl += `?token=${encodeURIComponent(joinToken)}`;
+    }
 
     console.log(`🔌 Connecting to WebSocket: ${wsUrl}`);
     ws = new WebSocket(wsUrl);
@@ -1761,7 +1769,9 @@ function formatSpeed(bytesPerSecond) {
 }
 
 function generateId() {
-    return Math.random().toString(36).substr(2, 9);
+    const array = new Uint8Array(12);
+    crypto.getRandomValues(array);
+    return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ==================== CLEANUP ====================

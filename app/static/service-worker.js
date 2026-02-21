@@ -1,5 +1,5 @@
 // StreamSnatcher Service Worker
-const CACHE_NAME = 'streamsnatcher-v1';
+const CACHE_NAME = 'streamsnatcher-v2';
 const STATIC_ASSETS = [
     '/',
     '/static/css/style.css',
@@ -41,14 +41,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
-    
+
     // Skip WebSocket and API requests
-    if (url.pathname.startsWith('/ws/') || 
+    if (url.pathname.startsWith('/ws/') ||
         url.pathname.startsWith('/api/') ||
         request.method !== 'GET') {
         return;
     }
-    
+
     event.respondWith(
         fetch(request)
             .then((response) => {
