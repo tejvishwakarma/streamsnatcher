@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1 class="page-title">About StreamSnatcher</h1>
+    <p class="page-subtitle">
+      Lightning‑fast, private, browser‑to‑browser file transfers powered by WebRTC—no accounts, no uploads to cloud
+      storage, just direct, secure connections between peers.
+    </p>
+  </section>
+
+  <div class="content-container">
+
+    <!-- Mission -->
+    <section class="content-section">
+      <h2>Our Mission</h2>
+      <p>
+        StreamSnatcher exists because sharing a file should be as simple as handing someone a flash drive — except
+        without the flash drive. Traditional file sharing forces you through a roundabout journey: upload your file
+        to a cloud server, wait for it to finish, copy a link, send it to your recipient, then wait again while
+        they download from that same server. Along the way, your data sits on someone else's computer,
+        accessible to the service provider, potentially exposed to breaches, and subject to storage quotas.
+      </p>
+      <p>
+        We built StreamSnatcher to eliminate that entire middle step. By leveraging WebRTC — the same technology
+        that makes browser-based video calls possible — files travel directly from your browser to the
+        recipient's browser. There is no upload, no cloud storage, and no download link. The transfer is
+        immediate, the architecture is private by default, and the service is free to use without registration.
+      </p>
+      <p>
+        Our mission is to make peer-to-peer file transfer accessible to everyone: individuals sharing family
+        photos, teams exchanging design assets, professionals transferring sensitive documents, and anyone who
+        values speed and privacy over the convenience theater of cloud-first workflows.
+      </p>
+    </section>
+
+    <!-- Why StreamSnatcher -->
+    <section class="content-section">
+      <h2>Why StreamSnatcher?</h2>
+      <p>
+        Most file-sharing tools are built around a server-centric model: your file goes up to the cloud, then
+        back down to the recipient. This works, but it introduces latency (you wait for two transfers instead
+        of one), privacy concerns (a third party stores your data), and artificial limits (free tiers cap file
+        sizes at 2 GB, 5 GB, or 25 MB for email attachments).
+      </p>
+      <ul>
+        <li><strong>Direct peer‑to‑peer transfers</strong> — files flow between browsers with no server storage, ever.
+          Your data never sits on someone else's infrastructure.</li>
+        <li><strong>Real‑time speed</strong> — on a local network, transfers can saturate your connection because
+          there's no cloud middleman adding latency.</li>
+        <li><strong>No sign‑in required</strong> — create a session and start transferring in under ten seconds. No
+          email verification, no password, no profile.</li>
+        <li><strong>Works across modern browsers</strong> — Chrome, Firefox, Edge, Safari, Opera, and Brave all support
+          the WebRTC standard that StreamSnatcher is built on.</li>
+        <li><strong>No file size limits</strong> — send a 50 KB text file or a 50 GB video project. The practical
+          ceiling is your device's memory and storage, not an artificial quota.</li>
+        <li><strong>Built‑in encryption</strong> — WebRTC data channels use DTLS encryption by default. Your files are
+          protected in transit without any extra configuration.</li>
+      </ul>
+    </section>
+
+    <!-- The Technology -->
+    <section class="content-section">
+      <h2>The Technology Behind StreamSnatcher</h2>
+      <p>
+        StreamSnatcher is built on <strong>WebRTC</strong> (Web Real-Time Communication), an open-source framework
+        originally developed by Google and now standardized by the W3C and IETF. WebRTC was designed to enable
+        real-time audio and video communication directly between browsers, but its <strong>data channel</strong>
+        capability is equally powerful for transferring arbitrary binary data — including files of any type and size.
+      </p>
+
+      <h3>How WebRTC data channels work</h3>
+      <p>
+        When two peers want to exchange files, their browsers perform a handshake process called
+        <strong>signaling</strong>. During signaling, each browser generates an SDP (Session Description Protocol)
+        offer describing its capabilities, and they exchange ICE (Interactive Connectivity Establishment) candidates
+        — essentially, lists of network addresses the browsers can use to reach each other. StreamSnatcher's
+        server facilitates this signaling exchange, but once the connection is established, the server is no longer
+        involved in the data flow.
+      </p>
+      <p>
+        The resulting peer connection uses <strong>SCTP (Stream Control Transmission Protocol)</strong> over
+        <strong>DTLS (Datagram Transport Layer Security)</strong>, which provides both encryption and reliable,
+        ordered delivery of data. Files are split into chunks, sent through this encrypted channel, and reassembled
+        on the receiving end — all within the browser, with no plugins or extensions required.
+      </p>
+
+      <h3>NAT traversal: STUN and TURN</h3>
+      <p>
+        Most devices sit behind NAT (Network Address Translation) routers, which means they don't have direct
+        public IP addresses. WebRTC uses <strong>STUN</strong> (Session Traversal Utilities for NAT) servers to
+        help each peer discover its public-facing IP address and port. In most cases, this is sufficient to
+        establish a direct connection.
+      </p>
+      <p>
+        When both peers are behind symmetric NATs or restrictive firewalls that prevent direct connections,
+        WebRTC falls back to a <strong>TURN</strong> (Traversal Using Relays around NAT) server, which relays
+        data between peers. While this adds latency, the data remains encrypted end-to-end. StreamSnatcher
+        configures both STUN and TURN servers to maximize connectivity across different network environments.
+      </p>
+
+      <h3>Open standards, no vendor lock-in</h3>
+      <p>
+        Because WebRTC is an open W3C standard implemented natively in every major browser engine (Blink, Gecko,
+        and WebKit), StreamSnatcher doesn't depend on proprietary plugins, third-party SDKs, or platform-specific
+        runtimes. This means the service works on Windows, macOS, Linux, iOS, and Android — any device with
+        a modern browser can participate in file transfers without installing anything.
+      </p>
+    </section>
+
+    <!-- Privacy by design -->
+    <section class="content-section">
+      <h2>Privacy by Design</h2>
+      <p>
+        Privacy isn't a feature we added on top of an existing architecture — it's a consequence of the
+        architecture itself. When files never pass through a centralized server, there's nothing to log,
+        nothing to scan, and nothing to subpoena. Here's how this works in practice:
+      </p>
+      <div class="security-points">
+        <div class="security-point">
+          <div class="security-icon">🔒</div>
+          <h4>End‑to‑end encrypted</h4>
+          <p>All transfers use DTLS-encrypted WebRTC data channels. Encryption keys are negotiated directly between
+            peers, so StreamSnatcher — and your ISP — never see the plaintext content.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🗂️</div>
+          <h4>No server file storage</h4>
+          <p>Files never touch our servers. We don't have the infrastructure to store, inspect, or index your data. The
+            server only facilitates the initial connection handshake.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🧭</div>
+          <h4>Minimal technical metadata</h4>
+          <p>We process only the minimum metadata needed for connection establishment: session IDs, ICE candidates, and
+            short-lived diagnostic logs that are discarded after the session ends.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">⚙️</div>
+          <h4>User control</h4>
+          <p>Sessions are entirely ephemeral. Close the browser tab, and the session — along with all associated
+            connection data — ceases to exist. There are no persistent user accounts or activity histories.</p>
+        </div>
+      </div>
+      <p>
+        For full details on our data practices, see the <a href="/privacy-policy">Privacy Policy</a>. If anything is
+        unclear, <a href="/contact">reach out</a> and we'll explain.
+      </p>
+    </section>
+
+    <!-- Built for performance -->
+    <section class="content-section">
+      <h2>Built for Performance</h2>
+      <p>
+        StreamSnatcher isn't just private — it's fast. By cutting out the cloud middleman, transfers happen at
+        the maximum speed your network allows. Here's what powers the performance:
+      </p>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <h4>WebRTC data channels</h4>
+          <p>Optimized binary transport using SCTP, which provides reliable, ordered delivery with built-in congestion
+            control — purpose-built for streaming large files efficiently in browsers.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Adaptive chunking</h4>
+          <p>Files are split into variable-size chunks that adapt to network conditions, improving throughput on fast
+            connections and maintaining stability on constrained ones.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Session-based architecture</h4>
+          <p>Room-based sessions with unique codes and QR support make it easy to connect quickly. Sessions are
+            lightweight and designed for minimal overhead.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Cross‑browser compatibility</h4>
+          <p>Works natively in Chrome, Firefox, Edge, Safari, Opera, and Brave — no plugins, extensions, or downloads
+            required on any supported platform.</p>
+        </div>
+      </div>
+      <p>
+        The interface is designed for clarity and speed: drag‑and‑drop file selection, real-time progress indicators
+        with per-file status, and a minimal number of steps from opening the page to completing a transfer.
+      </p>
+    </section>
+
+    <!-- Use cases summary -->
+    <section class="content-section">
+      <h2>Who Uses StreamSnatcher?</h2>
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-icon">📁</div>
+          <h3>Personal sharing</h3>
+          <p>Send vacation photos, home videos, and documents to friends and family without uploading to cloud services.
+            No storage limits, no account required, no link expiration.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🤝</div>
+          <h3>Team handoffs</h3>
+          <p>Exchange design files, build artifacts, presentations, and drafts with collaborators in real time. Skip the
+            upload-wait-download cycle of shared drives.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🛡️</div>
+          <h3>Sensitive transfers</h3>
+          <p>Transfer confidential documents, legal files, or medical records directly between devices for scenarios
+            where data should never reside on third-party servers.</p>
+        </div>
+      </div>
+      <p>
+        For detailed scenarios and step-by-step examples, visit the <a href="/use-cases">Use Cases</a> page.
+      </p>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="content-section">
+      <h2>What's Next</h2>
+      <p>
+        StreamSnatcher is under active development. Here's what we're working on and considering for future releases:
+      </p>
+      <ul>
+        <li><strong>Resumable transfers</strong> — recover interrupted transfers without starting over, especially
+          important for large files on unstable connections.</li>
+        <li><strong>Enhanced connection diagnostics</strong> — self-serve troubleshooting tools that help identify
+          whether issues are network-related, browser-related, or firewall-related.</li>
+        <li><strong>Smarter chunk parallelization</strong> — leveraging multiple data channels simultaneously to better
+          utilize high-bandwidth connections.</li>
+        <li><strong>Session presets</strong> — preconfigured modes for common scenarios like one-to-one transfers,
+          broadcast sending, and round-robin distribution.</li>
+        <li><strong>Time-boxed share links</strong> — optional link-based share flows with automatic expiration windows
+          for added security.</li>
+      </ul>
+      <p>
+        Feature priorities are shaped by community feedback. If you have an idea or a pain point, share it on the <a
+          href="/contact">Contact page</a> — every suggestion is read and considered.
+      </p>
+    </section>
+
+    <!-- Trust and transparency -->
+    <section class="content-section">
+      <h2>Trust &amp; Transparency</h2>
+      <p>
+        We believe you deserve to understand exactly how the tools you use work. That's why we publish detailed
+        <a href="/privacy-policy">Privacy Policy</a>, <a href="/terms-of-service">Terms of Service</a>, and
+        <a href="/disclaimer">Disclaimer</a> documents that explain our data practices, service limitations,
+        and user responsibilities in plain language.
+      </p>
+      <p>
+        The core file transfer service is free and sustained through non-intrusive display advertising on content
+        pages. Ads are placed away from the transfer interface and never interrupt active file transfers. We do
+        not sell user data, track file contents, or build advertising profiles from your activity.
+      </p>
+      <p>
+        If anything about StreamSnatcher is unclear — whether it's a technical question, a privacy concern, or a
+        feature request — head to the <a href="/contact">Contact page</a> and send us a message. We read and
+        respond to every inquiry.
+      </p>
+    </section>
+
+    <!-- Optional in-article ad slot -->
+    <div class="ad-container ad-horizontal">
+      <!-- Your AdSense code can be placed here -->
+    </div>
+
+  </div>
+</main>
+{% endblock %}

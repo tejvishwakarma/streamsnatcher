@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "StreamSnatcher Blog",
+    "description": "In-depth articles about WebRTC technology, peer-to-peer file transfer, privacy-first sharing, and how StreamSnatcher works under the hood.",
+    "url": "https://streamsnatcher.com/blog",
+    "publisher": {
+        "@type": "Organization",
+        "name": "StreamSnatcher",
+        "url": "https://streamsnatcher.com"
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+    <section class="page-hero">
+        <h1 class="page-title">StreamSnatcher Blog</h1>
+        <p class="page-subtitle">In-depth articles about WebRTC, peer-to-peer technology, file transfer best practices,
+            and the future of private sharing.</p>
+    </section>
+
+    <div class="content-container">
+
+        <section class="content-section">
+            <p>
+                Explore our collection of detailed guides and analyses covering the technology behind StreamSnatcher,
+                the privacy advantages of peer-to-peer architecture, and practical comparisons with traditional
+                file-sharing methods.
+            </p>
+        </section>
+
+        <!-- Article Cards -->
+        <section class="content-section">
+            <div class="info-cards">
+
+                <a href="/blog/webrtc-file-transfer-guide" class="info-card blog-card"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="info-icon">📡</div>
+                    <h3>WebRTC File Transfer: A Complete Guide</h3>
+                    <p class="blog-date">February 21, 2026</p>
+                    <p>
+                        A comprehensive look at how WebRTC enables direct browser-to-browser file transfers — covering
+                        data channels, SCTP/DTLS encryption, NAT traversal with STUN and TURN, and practical
+                        implementation considerations.
+                    </p>
+                    <span class="btn btn-secondary" style="margin-top: 1rem; display: inline-block;">Read Article
+                        →</span>
+                </a>
+
+                <a href="/blog/privacy-first-file-sharing" class="info-card blog-card"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="info-icon">🛡️</div>
+                    <h3>Privacy-First File Sharing: Why P2P Matters in 2026</h3>
+                    <p class="blog-date">February 21, 2026</p>
+                    <p>
+                        Why peer-to-peer architecture provides stronger privacy guarantees than cloud storage, the risks
+                        of centralized file sharing, and how zero-knowledge transfer works.
+                    </p>
+                    <span class="btn btn-secondary" style="margin-top: 1rem; display: inline-block;">Read Article
+                        →</span>
+                </a>
+
+                <a href="/blog/p2p-vs-cloud-storage" class="info-card blog-card"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="info-icon">⚖️</div>
+                    <h3>P2P vs. Cloud Storage: Which Is Better for File Transfer?</h3>
+                    <p class="blog-date">February 21, 2026</p>
+                    <p>
+                        A detailed comparison of peer-to-peer and cloud-based file transfer across speed, privacy,
+                        cost, file size limits, and real-world use cases — with guidance on choosing the right approach.
+                    </p>
+                    <span class="btn btn-secondary" style="margin-top: 1rem; display: inline-block;">Read Article
+                        →</span>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Topics overview -->
+        <section class="content-section">
+            <h2>What We Write About</h2>
+            <p>
+                Our articles focus on topics at the intersection of web technology, privacy, and practical file sharing:
+            </p>
+            <ul>
+                <li><strong>WebRTC technology</strong> — how data channels, ICE/STUN/TURN, and DTLS encryption work
+                    together to enable real-time browser communication</li>
+                <li><strong>Digital privacy</strong> — why architectural decisions matter more than policies, and how
+                    peer-to-peer reduces your attack surface</li>
+                <li><strong>File transfer best practices</strong> — practical guidance on optimizing transfer speed,
+                    handling large files, and choosing the right tool for the job</li>
+                <li><strong>Technology comparisons</strong> — honest analyses of P2P vs. cloud storage, with clear
+                    guidance on when each approach is best</li>
+            </ul>
+            <p>
+                Have a topic suggestion? Let us know through the <a href="/contact">Contact page</a>.
+            </p>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

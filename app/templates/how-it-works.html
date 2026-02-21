@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Transfer Files with StreamSnatcher",
+    "description": "Step-by-step guide to transferring files directly between devices using StreamSnatcher's WebRTC-powered peer-to-peer technology.",
+    "totalTime": "PT2M",
+    "step": [
+        {
+            "@type": "HowToStep",
+            "name": "Create a session",
+            "text": "Open streamsnatcher.com and click the Start Transfer button to generate a unique room code and QR code. Share the code or QR with the person you want to exchange files with through a trusted channel.",
+            "position": 1
+        },
+        {
+            "@type": "HowToStep",
+            "name": "Connect peers",
+            "text": "The recipient opens the session link or scans the QR code. Both browsers perform an automatic WebRTC handshake using signaling, STUN for NAT traversal, and TURN relay as a fallback, establishing a direct encrypted connection.",
+            "position": 2
+        },
+        {
+            "@type": "HowToStep",
+            "name": "Transfer files",
+            "text": "Drag and drop files into the upload zone or use the file picker. Files are split into chunks and streamed over encrypted WebRTC data channels directly to the recipient's browser, with real-time progress tracking.",
+            "position": 3
+        },
+        {
+            "@type": "HowToStep",
+            "name": "Download received files",
+            "text": "The recipient's browser reassembles the chunks into the original file and prompts a download. Files are transferred bit-for-bit with no compression or modification, preserving full quality and integrity.",
+            "position": 4
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1 class="page-title">How StreamSnatcher Works</h1>
+    <p class="page-subtitle">
+      A detailed look at the technology and process behind direct, encrypted, browser‑to‑browser file transfers — from
+      creating a session to receiving your files.
+    </p>
+  </section>
+
+  <div class="content-container">
+
+    <!-- Quick steps -->
+    <section class="content-section">
+      <h2>Quick Start Guide</h2>
+      <p>
+        StreamSnatcher is designed so that you can start transferring files within seconds, without creating an
+        account or installing any software. Here's the step-by-step process:
+      </p>
+
+      <div class="steps-section">
+        <div class="step-detailed">
+          <div class="step-number-large">1</div>
+          <div class="step-content-large">
+            <h3>Create a session</h3>
+            <p>
+              Open the <a href="/">StreamSnatcher homepage</a> and click the <strong>Start Transfer</strong> button.
+              This generates a unique room code and a scannable QR code. The room code is a random, cryptographically
+              secure token — it cannot be guessed or brute-forced. Share the code or QR with your intended recipient
+              through any trusted communication channel (messaging app, email, in person).
+            </p>
+            <div class="step-details">
+              <p>Tips:</p>
+              <ul>
+                <li>Only people with your exact room code can join the session. Share it carefully.</li>
+                <li>Keep the browser tab open and in the foreground — closing it ends the session.</li>
+                <li>Sessions support up to 2 peers for optimal transfer performance.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-detailed">
+          <div class="step-number-large">2</div>
+          <div class="step-content-large">
+            <h3>Connect peers</h3>
+            <p>
+              When the recipient opens the session link or scans the QR code, both browsers begin an automatic
+              connection process. This happens behind the scenes in milliseconds: the browsers exchange
+              <strong>SDP (Session Description Protocol)</strong> offers and answers through StreamSnatcher's
+              signaling server, describing each browser's capabilities and network configuration.
+            </p>
+            <p>
+              Simultaneously, <strong>ICE (Interactive Connectivity Establishment)</strong> candidates are gathered.
+              These are potential network paths the browsers can use to reach each other. STUN servers help each
+              browser discover its public-facing IP address for NAT traversal. Once a viable path is found, a direct,
+              encrypted WebRTC connection is established.
+            </p>
+            <div class="step-details">
+              <p>What happens behind the scenes:</p>
+              <ul>
+                <li>SDP offers and ICE candidates are exchanged via the signaling server (WebSocket).</li>
+                <li>STUN servers help discover public endpoints when peers are behind NATs.</li>
+                <li>If direct connectivity fails (restrictive firewalls), traffic routes through a TURN relay while
+                  remaining end-to-end encrypted.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-detailed">
+          <div class="step-number-large">3</div>
+          <div class="step-content-large">
+            <h3>Transfer files</h3>
+            <p>
+              Drag and drop files into the upload zone, or use the file picker to select them. StreamSnatcher
+              reads each file using the browser's File API, splits it into manageable chunks, and streams those
+              chunks through the encrypted WebRTC data channel directly to the recipient's browser. Progress is
+              shown in real time with per-file status indicators.
+            </p>
+            <div class="step-details">
+              <p>Good to know:</p>
+              <ul>
+                <li>Files are sent bit-for-bit — no compression, transcoding, or quality loss occurs.</li>
+                <li>Any file type can be transferred: documents, images, videos, archives, executables, and more.</li>
+                <li>You can queue multiple files and they'll be sent sequentially.</li>
+                <li>Closing the tab ends the session and all active transfers immediately.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-detailed">
+          <div class="step-number-large">4</div>
+          <div class="step-content-large">
+            <h3>Download received files</h3>
+            <p>
+              On the receiving end, the browser buffers incoming chunks and reassembles them into the original
+              file as a Blob object. Once complete, the file is ready for download. The reconstructed file is
+              byte-identical to the original — no data is lost, modified, or compressed during the transfer process.
+            </p>
+            <div class="step-details">
+              <p>Tips:</p>
+              <ul>
+                <li>Downloaded files go to your browser's default download directory.</li>
+                <li>For very large files, ensure you have sufficient free disk space before starting the transfer.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deep dive: technical flow -->
+    <section class="content-section">
+      <h2>Technical Deep Dive</h2>
+      <p>
+        This section is for those who want to understand the underlying protocols and mechanisms in more detail.
+        For most users, the Quick Start Guide above is all you need.
+      </p>
+
+      <h3>Signaling: The Connection Handshake</h3>
+      <p>
+        Before two browsers can exchange file data, they need to discover each other and agree on communication
+        parameters. This process is called <strong>signaling</strong>, and it's the only part of the transfer
+        where StreamSnatcher's server is involved.
+      </p>
+      <p>
+        When a session creator and a joiner are both connected, their browsers generate <strong>SDP
+          (Session Description Protocol)</strong> descriptions. The SDP offer from the initiator contains
+        information about supported codecs, encryption methods, and network capabilities. The joiner responds
+        with an SDP answer confirming compatible parameters. These messages are relayed through StreamSnatcher's
+        WebSocket signaling server — the server sees only the session metadata (not file content), and
+        its role ends once the connection is established.
+      </p>
+
+      <h3>ICE, STUN, and TURN: Finding a Path</h3>
+      <p>
+        Most devices don't have directly reachable public IP addresses — they sit behind NAT (Network Address
+        Translation) routers. <strong>ICE (Interactive Connectivity Establishment)</strong> is the process by
+        which WebRTC systematically tries different network paths to establish connectivity:
+      </p>
+      <ul>
+        <li><strong>Host candidates</strong> — the device's local IP addresses (e.g., 192.168.x.x). These work when both
+          peers are on the same local network.</li>
+        <li><strong>Server reflexive candidates</strong> — the public-facing IP and port discovered via a STUN server.
+          This is the most common successful path for home and mobile networks.</li>
+        <li><strong>Relay candidates</strong> — traffic routed through a TURN server when direct paths are blocked by
+          symmetric NATs or corporate firewalls. The TURN server sees encrypted packets but cannot decrypt them.</li>
+      </ul>
+      <p>
+        ICE tests these candidates in priority order and selects the most direct available path. On well-connected
+        home networks, a direct peer-to-peer connection is typically established in under one second.
+      </p>
+
+      <h3>Data Channels: SCTP over DTLS</h3>
+      <p>
+        Once connected, file data flows through a <strong>WebRTC data channel</strong> built on
+        <strong>SCTP (Stream Control Transmission Protocol)</strong> running over <strong>DTLS (Datagram
+          Transport Layer Security)</strong>. This combination provides:
+      </p>
+      <ul>
+        <li><strong>Encryption</strong> — DTLS encrypts all data in transit using keys negotiated directly between the
+          two peers. Even StreamSnatcher's signaling server cannot decrypt the data.</li>
+        <li><strong>Reliable, ordered delivery</strong> — SCTP provides TCP-like reliability (retransmission of lost
+          packets, in-order delivery) while running over UDP, which avoids TCP's head-of-line blocking problem.</li>
+        <li><strong>Congestion control</strong> — built-in algorithms prevent the data channel from overwhelming slower
+          network links, adapting throughput dynamically based on available bandwidth and packet loss.</li>
+      </ul>
+
+      <h3>File Chunking and Reassembly</h3>
+      <p>
+        Browsers have a maximum message size for WebRTC data channels (typically 256 KB or less depending on
+        implementation). StreamSnatcher handles this by splitting files into chunks before sending. On the sending
+        side, the File API reads file data as ArrayBuffer slices, which are sent sequentially through the data
+        channel. On the receiving side, chunks are buffered in memory and reassembled into a complete Blob
+        object once all chunks have arrived. The resulting Blob is then made available for download through
+        a dynamically generated object URL.
+      </p>
+      <p>
+        This chunking approach allows transfers of files much larger than what would fit in a single WebRTC message,
+        limited only by available device memory and storage space rather than protocol constraints.
+      </p>
+    </section>
+
+    <!-- WebRTC vs traditional -->
+    <section class="content-section">
+      <h2>WebRTC vs. Traditional File Transfer</h2>
+      <p>
+        Traditional file-sharing services use a <strong>store-and-forward</strong> model: the sender uploads a
+        file to a server, and the recipient downloads it from that server. This model has been the default for
+        decades (email attachments, cloud drives, file-hosting services), but it introduces inherent tradeoffs:
+      </p>
+      <table class="comparison-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col">Aspect</th>
+            <th scope="col">WebRTC (StreamSnatcher)</th>
+            <th scope="col">Traditional Cloud Transfer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Speed</strong></td>
+            <td>Direct peer-to-peer; limited only by network bandwidth between the two devices</td>
+            <td>Upload, wait, then download — two separate transfers, each bottlenecked by the server</td>
+          </tr>
+          <tr>
+            <td><strong>Privacy</strong></td>
+            <td>Files never leave the peers' devices; encrypted in transit with DTLS</td>
+            <td>Files stored on third-party servers with varying encryption and retention policies</td>
+          </tr>
+          <tr>
+            <td><strong>Size limits</strong></td>
+            <td>No artificial limits; constrained only by device memory and storage</td>
+            <td>Typically capped at 2 GB – 15 GB on free tiers; email limited to 25 MB</td>
+          </tr>
+          <tr>
+            <td><strong>Account required</strong></td>
+            <td>No — instant use with zero registration</td>
+            <td>Usually requires an account with email verification</td>
+          </tr>
+          <tr>
+            <td><strong>Data retention</strong></td>
+            <td>Zero — sessions are ephemeral, no data persists after closing the tab</td>
+            <td>Files may be retained for days, months, or indefinitely on provider servers</td>
+          </tr>
+          <tr>
+            <td><strong>Availability</strong></td>
+            <td>Requires both peers to be online simultaneously</td>
+            <td>Asynchronous — recipient can download later</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Both models have valid use cases. WebRTC peer-to-peer excels when speed, privacy, and large file size
+        matter. Cloud services are better when asynchronous access or long-term storage is needed. StreamSnatcher
+        is purpose-built for the former scenario.
+      </p>
+    </section>
+
+    <!-- Security model -->
+    <section class="content-section">
+      <h2>Security Model</h2>
+      <p>
+        Security in StreamSnatcher is a byproduct of the peer-to-peer architecture rather than an add-on feature.
+        Here's what protects your data at each layer:
+      </p>
+      <div class="security-points">
+        <div class="security-point">
+          <div class="security-icon">🔐</div>
+          <h4>Encrypted in transit</h4>
+          <p>All file data travels through DTLS-encrypted WebRTC data channels. Encryption keys are negotiated directly
+            between the two peers — StreamSnatcher, your ISP, and any network intermediaries see only encrypted bytes.
+          </p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🗄️</div>
+          <h4>No server file storage</h4>
+          <p>Files never touch StreamSnatcher's servers. The server facilitates signaling only — exchanging SDP offers
+            and ICE candidates. Once the peer connection is established, the server is not involved in the data flow.
+          </p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🧯</div>
+          <h4>Minimal session metadata</h4>
+          <p>The only data StreamSnatcher processes is connection metadata (session IDs, ICE candidates) and short-lived
+            diagnostic logs. File names, file sizes, and file contents are never seen or recorded by the platform.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🧭</div>
+          <h4>Ephemeral sessions</h4>
+          <p>Sessions exist only while peers are connected. Closing the browser tab immediately terminates the session
+            and discards all associated connection data. There's no way to "reopen" a closed session.</p>
+        </div>
+      </div>
+      <p>
+        For complete details on our data practices, see the <a href="/privacy-policy">Privacy Policy</a>.
+      </p>
+    </section>
+
+    <!-- Browser compatibility -->
+    <section class="content-section">
+      <h2>Browser Compatibility</h2>
+      <p>
+        StreamSnatcher relies on WebRTC data channels, which are natively supported by all major modern browsers.
+        Here's a compatibility overview:
+      </p>
+      <table class="comparison-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col">Browser</th>
+            <th scope="col">Desktop</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Chrome</strong></td>
+            <td>✅ v56+</td>
+            <td>✅ Android &amp; iOS</td>
+            <td>Best overall performance and compatibility</td>
+          </tr>
+          <tr>
+            <td><strong>Firefox</strong></td>
+            <td>✅ v52+</td>
+            <td>✅ Android</td>
+            <td>Full support; strong privacy features</td>
+          </tr>
+          <tr>
+            <td><strong>Edge</strong></td>
+            <td>✅ Chromium-based</td>
+            <td>✅ Android &amp; iOS</td>
+            <td>Same engine as Chrome; fully compatible</td>
+          </tr>
+          <tr>
+            <td><strong>Safari</strong></td>
+            <td>✅ v11+</td>
+            <td>✅ iOS 11+</td>
+            <td>Supported; keep browser tab in foreground on iOS</td>
+          </tr>
+          <tr>
+            <td><strong>Opera</strong></td>
+            <td>✅ v43+</td>
+            <td>✅ Android</td>
+            <td>Chromium-based; fully compatible</td>
+          </tr>
+          <tr>
+            <td><strong>Brave</strong></td>
+            <td>✅ All versions</td>
+            <td>✅ Android &amp; iOS</td>
+            <td>May need WebRTC whitelisted in Shields settings</td>
+          </tr>
+          <tr>
+            <td><strong>Internet Explorer</strong></td>
+            <td>❌ Not supported</td>
+            <td>N/A</td>
+            <td>IE does not implement WebRTC</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Performance tips -->
+    <section class="content-section">
+      <h2>Performance Tips</h2>
+      <p>
+        While StreamSnatcher handles the technical complexity automatically, you can optimize transfer speed and
+        reliability with these practices:
+      </p>
+      <ul>
+        <li><strong>Use a stable connection</strong> — Wi-Fi or Ethernet is significantly more reliable than cellular
+          data. Avoid captive portals (hotel, café Wi-Fi) which may block WebRTC.</li>
+        <li><strong>Keep the tab in the foreground</strong> — modern browsers throttle background tabs to save CPU and
+          battery. During large transfers, keep the StreamSnatcher tab active and visible.</li>
+        <li><strong>Close heavy applications</strong> — free up CPU, RAM, and network bandwidth by closing video
+          streaming, cloud sync, or other bandwidth-intensive applications during transfers.</li>
+        <li><strong>Disable interfering extensions</strong> — privacy-focused browser extensions that block WebRTC (for
+          IP leak prevention) may prevent connections. Whitelist streamsnatcher.com if needed.</li>
+        <li><strong>For mobile: prevent sleep</strong> — disable auto-lock or keep the screen on during transfers to
+          prevent the OS from suspending the browser process.</li>
+      </ul>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section class="content-section">
+      <h2>Troubleshooting</h2>
+      <p>
+        If you encounter issues, try these solutions in order:
+      </p>
+      <ul>
+        <li><strong>Peers can't connect</strong> — refresh both browser tabs and verify the room code matches exactly.
+          Check that no browser extensions are blocking WebRTC connections.</li>
+        <li><strong>Connection established but no transfer</strong> — ensure both peers have the tab in the foreground
+          and that the sender has dragged files into the upload zone.</li>
+        <li><strong>Slow transfer speeds</strong> — the connection may be routing through a TURN relay. Try switching to
+          a less restrictive network (e.g., mobile hotspot) to establish a direct peer connection.</li>
+        <li><strong>Transfer interrupted</strong> — if a peer disconnects mid-transfer, the file will need to be resent
+          from the beginning. Use a stable wired connection for large transfers.</li>
+        <li><strong>Network-specific issues</strong> — corporate, university, and some public networks actively block
+          WebRTC traffic. If you consistently fail from one network, try a different connection.</li>
+      </ul>
+      <p>
+        If none of these steps resolve your issue, visit the <a href="/contact">Contact page</a> and describe
+        your browser version, operating system, network type, and the steps to reproduce the problem. You can
+        also check the <a href="/faq">FAQ</a> for answers to common questions.
+      </p>
+    </section>
+
+  </div>
+</main>
+{% endblock %}

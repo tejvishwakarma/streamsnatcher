@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact StreamSnatcher",
+    "description": "{{ seo.description }}",
+    "mainEntity": {
+        "@type": "Organization",
+        "name": "StreamSnatcher",
+        "url": "https://streamsnatcher.com",
+        "contactPoint": [
+            {
+                "@type": "ContactPoint",
+                "contactType": "Customer Support",
+                "email": "support@streamsnatcher.com",
+                "availableLanguage": "English"
+            },
+            {
+                "@type": "ContactPoint",
+                "contactType": "Technical Support",
+                "email": "bugs@streamsnatcher.com",
+                "availableLanguage": "English"
+            },
+            {
+                "@type": "ContactPoint",
+                "contactType": "Sales",
+                "email": "business@streamsnatcher.com",
+                "availableLanguage": "English"
+            }
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="marketing-page">
+    <div class="page-hero">
+        <h1 class="page-title">Contact StreamSnatcher</h1>
+        <p class="page-subtitle">We'd love to hear from you</p>
+    </div>
+
+    <div class="content-container">
+        <!-- AdSense: Top - Uncomment after AdSense approval
+        <div class="ad-container ad-horizontal">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-YOUR_PUB_ID" data-ad-slot="YOUR_SLOT_ID"
+                data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        -->
+
+        <!-- <section class="content-section">
+            <h2>Get in Touch</h2>
+            <p>Have questions, feedback, or need support? We're here to help! Choose the best way to reach us:</p>
+        </section>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3>Email Support</h3>
+                <p>For general inquiries and support</p>
+                <a href="mailto:support@streamsnatcher.com" class="contact-link">support@streamsnatcher.com</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">🐛</div>
+                <h3>Bug Reports</h3>
+                <p>Found a bug? Let us know!</p>
+                <a href="mailto:bugs@streamsnatcher.com" class="contact-link">bugs@streamsnatcher.com</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">💡</div>
+                <h3>Feature Requests</h3>
+                <p>Have an idea to improve StreamSnatcher?</p>
+                <a href="mailto:features@streamsnatcher.com" class="contact-link">features@streamsnatcher.com</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">🤝</div>
+                <h3>Business Inquiries</h3>
+                <p>Partnerships and collaborations</p>
+                <a href="mailto:business@streamsnatcher.com" class="contact-link">business@streamsnatcher.com</a>
+            </div>
+        </div> -->
+
+        <!-- AdSense: Mid-Content - Uncomment after AdSense approval
+        <div class="ad-container ad-horizontal">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-YOUR_PUB_ID" data-ad-slot="YOUR_SLOT_ID"
+                data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        -->
+
+        <section class="content-section">
+            <h2>Contact Form</h2>
+            <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+
+            <form id="contact-form" class="contact-form">
+                <input type="hidden" name="access_key" value="cfd4fcf6-345d-4655-8520-1501e6bad6bc">
+
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject-select">Subject *</label>
+                    <select id="subject-select" name="topic" required>
+                        <option value="">Select a topic</option>
+                        <option value="General Support">General Support</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Feature Request">Feature Request</option>
+                        <option value="Business Inquiry">Business Inquiry</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" rows="6" required
+                        placeholder="Tell us how we can help..."></textarea>
+                </div>
+
+                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                <button type="submit" class="btn btn-primary btn-large">Send Message</button>
+
+                <div id="form-status" class="form-status"></div>
+            </form>
+        </section>
+
+        <section class="content-section">
+            <h2>Frequently Asked Questions</h2>
+            <p>Before reaching out, check if your question is answered below:</p>
+
+            <div class="faq-section">
+                <div class="faq-item">
+                    <h4>How quickly will I get a response?</h4>
+                    <p>We typically respond to all inquiries within 24-48 hours during business days. Bug reports and
+                        critical issues are prioritized.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Is StreamSnatcher open source?</h4>
+                    <p>Parts of StreamSnatcher are open source and available on GitHub. Contact us for collaboration
+                        opportunities.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Can I contribute to StreamSnatcher?</h4>
+                    <p>Absolutely! We welcome contributions. Email us at business@streamsnatcher.com to discuss how you
+                        can help.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Do you offer custom implementations?</h4>
+                    <p>Yes! For enterprise or custom deployment needs, reach out to business@streamsnatcher.com.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AdSense: Bottom - Uncomment after AdSense approval
+        <div class="ad-container ad-horizontal">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-YOUR_PUB_ID" data-ad-slot="YOUR_SLOT_ID"
+                data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        -->
+    </div>
+</div>
+
+<script>
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const statusDiv = document.getElementById('form-status');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        statusDiv.textContent = 'Sending...';
+        statusDiv.className = 'form-status loading';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        const formData = new FormData(e.target);
+
+        // Convert FormData to JSON (Web3Forms accepts both)
+        const object = {};
+        formData.forEach((value, key) => {
+            object[key] = value;
+        });
+        const json = JSON.stringify(object);
+
+        try {
+            const response = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: json
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                statusDiv.textContent = '✓ Message sent successfully! We\'ll get back to you soon.';
+                statusDiv.className = 'form-status success';
+                e.target.reset();
+
+                setTimeout(() => {
+                    statusDiv.textContent = '';
+                    statusDiv.className = 'form-status';
+                }, 5000);
+            } else {
+                throw new Error(result.message || 'Failed to send');
+            }
+        } catch (error) {
+            statusDiv.textContent = '✗ Failed to send message. Please try again or email us directly.';
+            statusDiv.className = 'form-status error';
+            console.error('Form submission error:', error);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+        }
+    });
+</script>
+
+{% endblock %}

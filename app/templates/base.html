@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>{{ seo.title }}</title>
+    <meta name="title" content="{{ seo.title }}">
+    <meta name="description" content="{{ seo.description }}">
+    <meta name="keywords" content="{{ seo.keywords }}">
+    <meta name="author" content="{{ seo.author }}">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="{{ seo.canonical }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ seo.canonical }}">
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:image"
+        content="{{ seo.canonical | replace('/about', '') | replace('/contact', '') | replace('/how-it-works', '') | replace('/privacy-policy', '') | replace('/terms-of-service', '') | replace('/disclaimer', '') | replace('/faq', '') | replace('/use-cases', '') }}/static/images/logo.png">
+    <meta property="og:site_name" content="StreamSnatcher">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ seo.canonical }}">
+    <meta property="twitter:title" content="{{ seo.title }}">
+    <meta property="twitter:description" content="{{ seo.description }}">
+    <meta property="twitter:image" content="https://streamsnatcher.com/static/images/logo.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/favicon.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="StreamSnatcher">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "StreamSnatcher",
+        "url": "https://streamsnatcher.com",
+        "description": "Lightning-fast peer-to-peer file transfer service powered by WebRTC. Transfer files of any size directly between devices with zero storage.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Unlimited file size",
+            "High-speed transfer",
+            "Encrypted in transit",
+            "Zero server storage",
+            "No registration required",
+            "Multi-peer support"
+        ]
+    }
+    </script>
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "StreamSnatcher",
+        "url": "https://streamsnatcher.com",
+        "logo": "https://streamsnatcher.com/static/images/logo.png",
+        "sameAs": [
+            "https://twitter.com/streamsnatcher",
+            "https://github.com/streamsnatcher"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@streamsnatcher.com",
+            "availableLanguage": "English"
+        }
+    }
+    </script>
+
+    {% block extra_schema %}{% endblock %}
+
+    <!-- Google AdSense - Uncomment and replace YOUR_PUB_ID with your actual publisher ID after approval
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUB_ID"
+            crossorigin="anonymous"></script>
+    -->
+
+    <!-- Preconnect to speed up loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/marketing.css">
+    <link rel="stylesheet" href="/static/css/cookie-consent.css">
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="{{ page_class if page_class else 'page-marketing' }}">
+    <!-- Breadcrumbs -->
+    {% if breadcrumbs %}
+    <nav aria-label="Breadcrumb" class="breadcrumbs">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+            {% for crumb in breadcrumbs %}
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="{{ crumb.url }}">
+                    <span itemprop="name">{{ crumb.name }}</span>
+                </a>
+                <meta itemprop="position" content="{{ loop.index }}" />
+            </li>
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <!-- Navigation with semantic HTML -->
+    <header role="banner">
+        <nav role="navigation" aria-label="Main navigation">
+            <div class="logo">
+                <a href="/"><img src="/static/images/logo.png" alt="StreamSnatcher Logo" height="80px"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/how-it-works">How It Works</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Call to Action Section -->
+    {% if show_cta %}
+    <section class="cta-section" aria-labelledby="cta-heading">
+        <div class="cta-container">
+            <div class="cta-content">
+                <h2 id="cta-heading" class="cta-title">Ready to Transfer Files at Lightning Speed?</h2>
+                <p class="cta-description">
+                    No registration. No limits. No storage. Just pure peer-to-peer file transfer.
+                </p>
+                <div class="cta-features" role="list">
+                    <div class="cta-feature" role="listitem">
+                        <span class="cta-icon" aria-hidden="true">⚡</span>
+                        <span>High-Speed</span>
+                    </div>
+                    <div class="cta-feature" role="listitem">
+                        <span class="cta-icon" aria-hidden="true">🔒</span>
+                        <span>End-to-End Privacy</span>
+                    </div>
+                    <div class="cta-feature" role="listitem">
+                        <span class="cta-icon" aria-hidden="true">∞</span>
+                        <span>Unlimited Size</span>
+                    </div>
+                    <div class="cta-feature" role="listitem">
+                        <span class="cta-icon" aria-hidden="true">👥</span>
+                        <span>Multi-Peer</span>
+                    </div>
+                </div>
+                <a href="/" class="btn btn-cta" rel="nofollow">
+                    <span>Start Transferring Now</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <p class="cta-note">✨ Free forever • No account needed • Works instantly</p>
+            </div>
+
+            <div class="cta-bg-decoration" aria-hidden="true">
+                <div class="cta-circle circle-1"></div>
+                <div class="cta-circle circle-2"></div>
+                <div class="cta-circle circle-3"></div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="/static/images/logo.png" alt="StreamSnatcher Logo" height="80px">
+                <p>Instant peer-to-peer file transfers powered by WebRTC. Transfer any file, any size, completely free.
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/use-cases">Use Cases</a></li>
+                    <li><a href="/how-it-works">How It Works</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service">Terms of Service</a></li>
+                    <li><a href="/disclaimer">Disclaimer</a></li>
+                    <li><a href="/faq">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Technology</h4>
+                <p>Built with WebRTC, FastAPI, and modern web standards. Open-source friendly and privacy-focused.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 StreamSnatcher. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent" class="cookie-consent">
+        <div class="cookie-consent-container">
+            <div class="cookie-consent-content">
+                <h4>🍪 Cookie Preferences</h4>
+                <p>We use cookies for essential functionality and to improve your experience.
+                    <a href="/privacy-policy">Learn more</a>
+                </p>
+            </div>
+            <div class="cookie-consent-buttons">
+                <button class="cookie-btn cookie-btn-essential" onclick="acceptCookies('essential')">Essential
+                    Only</button>
+                <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies('all')">Accept All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cookie consent
+        (function () {
+            const consent = localStorage.getItem('cookieConsent');
+            if (!consent) {
+                setTimeout(() => {
+                    document.getElementById('cookie-consent').classList.add('visible');
+                }, 1000);
+            }
+        })();
+
+        function acceptCookies(level) {
+            localStorage.setItem('cookieConsent', level);
+            localStorage.setItem('cookieConsentDate', new Date().toISOString());
+            document.getElementById('cookie-consent').classList.remove('visible');
+
+            if (level === 'all') {
+                // Enable analytics/ads if needed
+                console.log('Full cookie consent granted');
+            }
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                    .then(reg => console.log('✓ Service worker registered'))
+                    .catch(err => console.log('Service worker registration failed:', err));
+            });
+        }
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

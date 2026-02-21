@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1 class="page-title">Disclaimer</h1>
+    <p class="page-subtitle">
+      StreamSnatcher facilitates direct, encrypted, browser‑to‑browser file transfers using WebRTC; transfer outcomes can vary due to factors outside the platform’s control, and files are not stored on servers.
+    </p>
+  </section>
+
+  <div class="content-container">
+
+    <!-- Purpose of the service -->
+    <section class="content-section">
+      <h2>Purpose of the service</h2>
+      <p>
+        StreamSnatcher provides a peer‑to‑peer file transfer interface designed for convenience and privacy, enabling users to send files directly between devices without uploading content to servers.
+      </p>
+      <p>
+        The platform does not provide cloud storage, backup, or content hosting, and sessions are intended for real‑time transfers only.
+      </p>
+    </section>
+
+    <!-- No file storage or access -->
+    <section class="content-section">
+      <h2>No file storage or access</h2>
+      <ul>
+        <li>Files are not uploaded to or stored on servers during transfers.</li>
+        <li>Contents of files are not inspected, moderated, or indexed by the platform.</li>
+        <li>Transfers occur over encrypted channels between participating devices only.</li>
+      </ul>
+      <p>
+        Because files never reside on servers, the platform cannot retrieve, restore, or provide copies of transferred content.
+      </p>
+    </section>
+
+    <!-- User responsibilities -->
+    <section class="content-section">
+      <h2>User responsibilities</h2>
+      <ul>
+        <li>Ensure that any content shared complies with applicable laws and that you have the right to transmit it.</li>
+        <li>Verify recipients and share session codes or QR codes only with trusted parties.</li>
+        <li>Use reputable antivirus tools and scan files before and after transfer to reduce risk.</li>
+      </ul>
+      <p>
+        You are solely responsible for the content you send or receive and for any consequences arising from its use.
+      </p>
+    </section>
+
+    <!-- No warranties -->
+    <section class="content-section">
+      <h2>No warranties</h2>
+      <p>
+        The service is provided “as is” and “as available” without warranties of any kind, including implied warranties of merchantability, fitness for a particular purpose, or non‑infringement.
+      </p>
+      <p>
+        Transfer speed, reliability, and compatibility depend on network conditions, device capabilities, browser behavior, and peer availability, and cannot be guaranteed.
+      </p>
+    </section>
+
+    <!-- Limits and risks -->
+    <section class="content-section">
+      <h2>Limits and risks</h2>
+      <ul>
+        <li>Highly restrictive networks and firewalls may require relay paths that can impact peak speeds.</li>
+        <li>Background browser policies, device sleep, or tab throttling can slow or pause large transfers.</li>
+        <li>Interruptions or disconnections may require peers to rejoin the session and restart the transfer.</li>
+      </ul>
+      <p>
+        Where relay is required by network conditions, encryption remains in place while throughput may vary.
+      </p>
+    </section>
+
+    <!-- Third‑party services -->
+    <section class="content-section">
+      <h2>Third‑party services</h2>
+      <p>
+        The platform may rely on standard WebRTC signaling and connectivity services (such as STUN/TURN) to establish sessions, which process limited technical metadata necessary for peer discovery and connectivity.
+      </p>
+      <p>
+        Where analytics or advertising are integrated, participating vendors may process limited identifiers and events consistent with consent controls and applicable policies.
+      </p>
+      <p>
+        Third‑party services operate under their own terms and policies, and the platform is not responsible for those providers.
+      </p>
+    </section>
+
+    <!-- Security and privacy -->
+    <section class="content-section">
+      <h2>Security and privacy</h2>
+      <div class="security-points">
+        <div class="security-point">
+          <div class="security-icon">🔐</div>
+          <h4>Encrypted in transit</h4>
+          <p>Transfers use encrypted WebRTC data channels to help protect content in transit.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🗄️</div>
+          <h4>No server file storage</h4>
+          <p>Files remain device‑to‑device and are not stored on platform servers.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🧯</div>
+          <h4>Minimal session data</h4>
+          <p>Only limited technical metadata is used to establish connections and is discarded with the session lifecycle.</p>
+        </div>
+      </div>
+      <p>
+        For details on data handling and consent, see the Privacy Policy linked in the site footer.
+      </p>
+    </section>
+
+    <!-- Not professional advice -->
+    <section class="content-section">
+      <h2>Not professional advice</h2>
+      <p>
+        Information presented on the site is for general informational purposes about how the service operates and does not constitute legal, security, or other professional advice.
+      </p>
+    </section>
+
+    <!-- Limitation of liability -->
+    <section class="content-section">
+      <h2>Limitation of liability</h2>
+      <p>
+        To the maximum extent permitted by law, the platform is not liable for indirect, incidental, special, consequential, or punitive damages, or for any loss of data, revenue, or goodwill arising from use of the service.
+      </p>
+      <p>
+        Your sole remedy for dissatisfaction with the service is to stop using it and end the session.
+      </p>
+    </section>
+
+    <!-- Changes to this disclaimer -->
+    <section class="content-section">
+      <h2>Changes to this disclaimer</h2>
+      <p>
+        This disclaimer may be updated to reflect product, technical, or policy changes, and a revised date will be posted when updates occur.
+      </p>
+    </section>
+
+    <!-- Contact -->
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>
+        For questions about this disclaimer or to report an issue, please visit the <a href="/contact">Contact</a> page.
+      </p>
+    </section>
+
+  </div>
+</main>
+{% endblock %}

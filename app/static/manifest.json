@@ -1,0 +1,27 @@
+{
+    "name": "StreamSnatcher",
+    "short_name": "StreamSnatcher",
+    "description": "Lightning-fast peer-to-peer file transfer. No limits, no storage, maximum privacy.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#8b5cf6",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/static/images/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "categories": ["utilities", "productivity"],
+    "screenshots": [],
+    "prefer_related_applications": false
+}

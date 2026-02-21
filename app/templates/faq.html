@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How do I start a file transfer with StreamSnatcher?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Create a session on the homepage, share the room code or QR with peers, then drag and drop files to start sending. Keep the tab open until transfers complete. No account or registration is needed — sessions are temporary and exist only while the page is open."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Do I need an account to use StreamSnatcher?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No account is required. StreamSnatcher is designed for instant use — simply open the site, create a session, and start transferring. Sessions are ephemeral and exist only while peers are connected, with no persistent user profiles or login required."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is there a file size limit?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "StreamSnatcher does not impose artificial file size limits. You can transfer files of any size, from small documents to multi-gigabyte video files. Practical limits depend on your browser's available memory, device storage capacity, and network bandwidth rather than platform restrictions."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Are files uploaded to servers?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Files are never uploaded to or stored on StreamSnatcher's servers. All transfers occur directly between devices over encrypted WebRTC data channels. The server only facilitates the initial connection handshake (signaling), after which data flows peer-to-peer."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is the transfer encrypted?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. All file transfers use DTLS-encrypted WebRTC data channels, which is the same encryption standard used by major video conferencing platforms. The encryption is built into the WebRTC protocol itself, meaning contents are not visible to StreamSnatcher, your ISP, or any intermediary."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How fast are transfers?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Transfer speed depends on the upload bandwidth of the sender and download bandwidth of the receiver. On a typical broadband connection, expect speeds between 5-50 Mbps for direct peer-to-peer connections. If both devices are on the same local network, speeds can be significantly higher. TURN relay connections may be slower due to the additional routing."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Which browsers are supported?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "StreamSnatcher works on all modern browsers that support WebRTC data channels, including Google Chrome, Mozilla Firefox, Microsoft Edge, Safari, Opera, and Brave. For the best experience, keep your browser updated to the latest version. Some older or niche browsers may lack full WebRTC support."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Does it work on mobile devices?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, StreamSnatcher works on mobile browsers that support WebRTC, including Chrome and Safari on iOS, and Chrome and Firefox on Android. For long transfers, keep the screen on and the browser tab active, as mobile operating systems may throttle or suspend background tabs to save battery."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Can I use StreamSnatcher with a VPN?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, StreamSnatcher generally works with VPNs. However, some VPN configurations may affect WebRTC connectivity or reduce transfer speeds due to additional routing. If you experience connection issues while using a VPN, try temporarily disabling it or switching to a different VPN server location."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What should I do if my transfer is slow?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Slow transfers are typically caused by network conditions. Try these steps: use a stable Wi-Fi or wired Ethernet connection instead of mobile data, close bandwidth-heavy applications, keep the browser tab in the foreground, and ensure both devices have strong internet connections. If speeds remain low, the connection may be routing through a TURN relay due to network restrictions."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1 class="page-title">Frequently Asked Questions</h1>
+    <p class="page-subtitle">
+      Everything you need to know about StreamSnatcher's peer‑to‑peer file transfers — from getting started and privacy
+      to performance tuning and browser compatibility.
+    </p>
+  </section>
+
+  <div class="content-container">
+
+    <!-- Getting started -->
+    <section class="content-section">
+      <h2>Getting Started</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">How do I start a file transfer?</summary>
+          <div class="faq-answer">
+            <p>Create a session on the homepage by clicking the "Start Transfer" button. This generates a unique room
+              code and a scannable QR code. Share either one with the person you want to exchange files with —
+              they can join by scanning the QR code or opening the link in their browser.</p>
+            <p>Once a peer connects, simply drag and drop files into the upload zone. The transfer begins
+              immediately and progress is shown in real time. Keep the browser tab open and active until all
+              transfers are complete, as closing the tab ends the session.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Do I need an account?</summary>
+          <div class="faq-answer">
+            <p>No — StreamSnatcher is designed for instant, frictionless use. There are no sign‑up forms, email
+              verifications, or user profiles. Sessions are completely ephemeral: they exist only while the page is
+              open and peers are connected, leaving no persistent traces on our end.</p>
+            <p>This design choice is intentional. By removing accounts, we eliminate a common attack surface for
+              data breaches and ensure your file-sharing activity is never tied to a persistent identity.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Is there a file size limit?</summary>
+          <div class="faq-answer">
+            <p>StreamSnatcher does not impose any artificial file size limit. You can transfer files ranging from
+              small text documents to multi‑gigabyte video files or project archives. The practical ceiling is
+              determined by your browser's available memory, your device's storage capacity, and the stability of
+              your network connection.</p>
+            <p>For very large files (10 GB+), we recommend using a wired Ethernet connection and keeping the
+              browser tab in the foreground to avoid throttling by the operating system.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Can I send multiple files at once?</summary>
+          <div class="faq-answer">
+            <p>Yes. You can select multiple files or drag and drop an entire batch into the upload zone. Each file
+              is queued and transferred sequentially, with individual progress bars showing the status of each file
+              in the queue. You can continue adding more files while transfers are in progress.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Privacy and security -->
+    <section class="content-section">
+      <h2>Privacy &amp; Security</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Are files uploaded to servers?</summary>
+          <div class="faq-answer">
+            <p>No. Files are never uploaded to StreamSnatcher's servers. All transfers happen directly between
+              your browser and the recipient's browser over encrypted WebRTC data channels. Our server's only role
+              is to facilitate the initial connection handshake (called "signaling") — once peers discover each
+              other, all file data flows directly between devices.</p>
+            <p>This means we physically cannot access, read, or store your files. Even if subpoenaed, there is
+              nothing to produce because the data never exists on our infrastructure.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Is the transfer encrypted?</summary>
+          <div class="faq-answer">
+            <p>Yes. WebRTC mandates DTLS (Datagram Transport Layer Security) encryption for all data channels.
+              This is the same encryption standard used by major video conferencing platforms like Google Meet and
+              Microsoft Teams. The encryption keys are negotiated directly between peers during the connection
+              setup, so contents are not visible to StreamSnatcher, your ISP, or any intermediary.</p>
+            <p>It's important to note that this is transport-layer encryption. While your data is protected in
+              transit, you should still only share files with people you trust, as the recipient has full access
+              to the decrypted file once received.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">What data does StreamSnatcher collect?</summary>
+          <div class="faq-answer">
+            <p>We collect the minimum technical metadata needed to establish connections: session identifiers,
+              ICE candidates (network routing information), and short‑lived diagnostic data for stability
+              improvements. We do not collect file names, file contents, or any data about what you transfer.</p>
+            <p>Session data is discarded when the session ends. For full details, review our
+              <a href="/privacy-policy">Privacy Policy</a>.
+            </p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Can I use StreamSnatcher with a VPN?</summary>
+          <div class="faq-answer">
+            <p>Yes, StreamSnatcher generally works with VPNs. However, some VPN configurations may affect WebRTC
+              connectivity or reduce transfer speeds because your traffic is routed through an additional server.
+              If you experience connection issues while using a VPN, try temporarily disabling it or switching to
+              a different VPN server location closer to your peer.</p>
+            <p>Note that some privacy-focused browser extensions may block WebRTC to prevent IP leakage. If you
+              use such extensions, you may need to whitelist streamsnatcher.com for transfers to work.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Performance and reliability -->
+    <section class="content-section">
+      <h2>Performance &amp; Reliability</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">How fast are transfers?</summary>
+          <div class="faq-answer">
+            <p>Transfer speed is determined by the slower of the sender's upload bandwidth and the receiver's
+              download bandwidth. On a typical broadband connection, expect speeds between 5–50 Mbps for direct
+              peer‑to‑peer connections. On local networks (e.g., same Wi‑Fi), speeds can be significantly
+              higher since data doesn't traverse the public internet.</p>
+            <p>If both devices are behind restrictive NATs or firewalls, the connection may route through a
+              TURN relay server, which can reduce speeds. For best results, use wired connections and avoid
+              congested networks.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Why did my transfer pause or slow down?</summary>
+          <div class="faq-answer">
+            <p>Several factors can cause transfers to pause or slow down. Modern browsers actively throttle
+              background tabs to conserve resources — keep the StreamSnatcher tab in the foreground during large
+              transfers. Mobile devices may enter sleep mode, cutting the network connection. Shared networks
+              (offices, cafes, dorms) may have bandwidth caps or high contention.</p>
+            <p>Try these troubleshooting steps: keep the tab visible and active, disable sleep/screen-off on your
+              device during transfers, close bandwidth-heavy apps (streaming video, large downloads), and switch
+              to a more stable connection if available.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">What if peers can't connect?</summary>
+          <div class="faq-answer">
+            <p>Connection failures are usually caused by restrictive networks. Common solutions include:
+              refreshing both browser tabs and verifying the room code matches exactly, disabling aggressive
+              ad-blockers or tracker-blocking extensions that may interfere with WebRTC signaling, and trying
+              a different network (a mobile hotspot can quickly confirm whether the ISP is the issue).</p>
+            <p>Corporate firewalls, university networks, and some public Wi‑Fi hotspots are known to block WebRTC
+              traffic. If you consistently can't connect from a particular network, it's likely a firewall
+              restriction. Using a VPN or switching to mobile data usually resolves this.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">What should I do if my transfer is slow?</summary>
+          <div class="faq-answer">
+            <p>Slow transfers are typically caused by network conditions rather than StreamSnatcher itself. Start
+              by switching from Wi‑Fi to a wired Ethernet connection if possible, as wired connections offer
+              more stable and consistent bandwidth. Close other applications that consume bandwidth, such as
+              video streaming or cloud sync services.</p>
+            <p>If speeds remain low after optimizing your connection, the transfer may be routing through a TURN
+              relay due to firewall restrictions on one or both sides. Try connecting both devices to less
+              restrictive networks. For very large files, consider transferring during off‑peak hours when
+              network congestion is lower.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Compatibility -->
+    <section class="content-section">
+      <h2>Browser &amp; Device Compatibility</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Which browsers are supported?</summary>
+          <div class="faq-answer">
+            <p>StreamSnatcher works on all modern browsers that support WebRTC data channels. This includes
+              Google Chrome (version 56+), Mozilla Firefox (version 52+), Microsoft Edge (Chromium-based),
+              Safari (version 11+), Opera, and Brave. For the best experience, always keep your browser
+              updated to the latest stable version.</p>
+            <p>Internet Explorer is not supported, and some niche or heavily customized browsers may lack full
+              WebRTC data channel support. If you encounter issues, try switching to Chrome or Firefox as a
+              baseline test.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Does it work on mobile?</summary>
+          <div class="faq-answer">
+            <p>Yes. StreamSnatcher works on mobile browsers with WebRTC support, including Chrome and Safari on
+              iOS, and Chrome and Firefox on Android. The interface is fully responsive and optimized for
+              touchscreens, making it easy to upload files and manage transfers on smaller screens.</p>
+            <p>For long transfers on mobile, keep the screen on and the browser app in the foreground. iOS and
+              Android aggressively suspend background processes to save battery, which can interrupt active
+              WebRTC connections. On Android, you can enable "Keep screen on while charging" in developer
+              settings for extended transfers.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">How many peers can join a session?</summary>
+          <div class="faq-answer">
+            <p>Each session supports up to 2 peers for optimal performance and reliability. This direct
+              one‑to‑one architecture ensures the fastest possible transfer speeds without the overhead of
+              managing multiple simultaneous connections, which can significantly reduce per‑peer throughput.</p>
+            <p>If you need to share with multiple people, you can create separate sessions for each recipient
+              or share files one pair at a time within the same session.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Can I bookmark or save a session for later?</summary>
+          <div class="faq-answer">
+            <p>Sessions are designed to be ephemeral and cannot be bookmarked for later use. Each session exists
+              only while at least one peer has the page open. When all participants close the tab, the session
+              is permanently ended and the room code becomes invalid.</p>
+            <p>This is a deliberate privacy feature — by ensuring sessions have no persistence, we eliminate
+              the risk of unauthorized access to stale session links.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Files and formats -->
+    <section class="content-section">
+      <h2>Files &amp; Formats</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Which file types are supported?</summary>
+          <div class="faq-answer">
+            <p>Any file type can be transferred through StreamSnatcher — documents (PDF, DOCX, XLSX), images
+              (JPEG, PNG, RAW), videos (MP4, MOV, AVI), audio (MP3, WAV, FLAC), archives (ZIP, RAR, TAR),
+              application binaries (EXE, DMG, APK), and more. StreamSnatcher treats all files as binary data
+              streams, so there are no format restrictions.</p>
+            <p>If a particular file fails to transfer, it's typically due to browser memory limitations for
+              extremely large files or network interruptions, not a file type restriction.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Are files compressed during transfer?</summary>
+          <div class="faq-answer">
+            <p>No. Files are transferred bit‑for‑bit without any compression, transcoding, or modification.
+              What the sender uploads is exactly what the receiver downloads. This is particularly important
+              for media professionals who need lossless quality — your RAW photos, uncompressed video, and
+              master audio files arrive exactly as they were sent.</p>
+            <p>If you want to reduce transfer time for large batches, consider compressing files into a ZIP
+              archive before sending. This is especially effective for text‑heavy files and documents.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Can I resume a failed transfer?</summary>
+          <div class="faq-answer">
+            <p>Currently, StreamSnatcher does not support resumable transfers. If a transfer is interrupted due
+              to a disconnection or browser crash, you'll need to rejoin the session (if it's still active) and
+              resend the file from the beginning. For very large files on unstable connections, we recommend
+              splitting files into smaller chunks before transferring.</p>
+            <p>Resumable transfer support is on our development roadmap, and we plan to implement it in a
+              future update to improve the experience for large file transfers over unreliable connections.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">How do I verify file integrity after transfer?</summary>
+          <div class="faq-answer">
+            <p>WebRTC data channels use SCTP (Stream Control Transmission Protocol), which provides built‑in
+              reliability guarantees including ordered delivery and retransmission of lost packets. This means
+              files arrive intact under normal conditions. However, for critical transfers, you can independently
+              verify integrity by comparing file checksums (MD5 or SHA-256) before and after the transfer using
+              free tools available for all operating systems.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Safety and responsibility -->
+    <section class="content-section">
+      <h2>Safety &amp; Responsibility</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Is content moderated?</summary>
+          <div class="faq-answer">
+            <p>No. Because files flow directly between peers and never pass through or get stored on
+              StreamSnatcher's servers, content moderation is not technically feasible. We are unable to see,
+              access, or scan the contents of any transfer.</p>
+            <p>Users are solely responsible for ensuring they only share content they have the legal right to
+              distribute. Always scan received files with up-to-date antivirus software before opening them,
+              especially when receiving from unfamiliar sources.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">What content is prohibited?</summary>
+          <div class="faq-answer">
+            <p>While we cannot monitor transfers, our Terms of Service prohibit the use of StreamSnatcher for
+              illegal purposes, including transferring malware, copyrighted material without authorization,
+              harmful or exploitative content, or any material that violates applicable laws. Users who misuse
+              the service may have their access revoked.</p>
+            <p>If you become aware of abuse, please report it through our
+              <a href="/contact">Contact page</a> with as much detail as possible.
+            </p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">Where can I report abuse?</summary>
+          <div class="faq-answer">
+            <p>Use the form on the <a href="/contact">Contact page</a> and select "General Support" as the
+              topic. Include any relevant details such as approximate time, session information if available,
+              and a description of the issue. Our team reviews all reports and takes appropriate action.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Billing and ads -->
+    <section class="content-section">
+      <h2>Billing &amp; Sustainability</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Is StreamSnatcher free?</summary>
+          <div class="faq-answer">
+            <p>Yes. The core file transfer service is completely free to use with no hidden fees, premium tiers,
+              or usage caps. We believe that basic file sharing should be accessible to everyone, regardless of
+              budget. There are no "free trial" limits — you get the full product at no cost.</p>
+            <p>To sustain the service, non-intrusive advertising may be displayed on content pages. Ads are
+              placed away from the transfer interface and never interrupt active file transfers.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">How does StreamSnatcher sustain itself?</summary>
+          <div class="faq-answer">
+            <p>StreamSnatcher is sustained through non‑intrusive display advertising on content pages. Because
+              file transfers are peer‑to‑peer (data flows directly between users), our server costs are
+              minimal compared to traditional cloud storage services. This lean architecture allows us to
+              offer the full service for free while remaining financially sustainable through modest ad
+              revenue.</p>
+            <p>Ad placement is carefully considered to avoid disrupting transfers or degrading the user
+              experience. We follow all applicable consent and privacy regulations.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Still need help -->
+    <section class="content-section">
+      <h2>Still Need Help?</h2>
+      <p>
+        If your question isn't answered above, visit the <a href="/contact">Contact</a> page and send us a message.
+        Include your browser name and version, device type, network environment (home, office, mobile), and a brief
+        description of the steps to reproduce any issue. This helps us diagnose problems faster and provide
+        targeted assistance.
+      </p>
+      <p>
+        You can also explore the <a href="/how-it-works">How It Works</a> page for a detailed technical walkthrough
+        and the <a href="/blog">Blog</a> for in-depth articles about WebRTC and peer-to-peer file transfer technology.
+      </p>
+    </section>
+
+  </div>
+</main>
+{% endblock %}

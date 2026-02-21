@@ -1,0 +1,40 @@
+# ==================== PYTHON ====================
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ==================== ENVIRONMENT ====================
+.env
+.env.production
+.env.development
+.env.local
+.env.staging
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==================== LOGS ====================
+*.log
+logs/
+
+# ==================== ARCHIVES (don't push old zips) ====================
+*.zip
+*.tar.gz
+*.rar
+
+# ==================== MISC ====================
+node_modules/
+package-lock.json

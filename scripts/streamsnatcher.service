@@ -1,0 +1,23 @@
+[Unit]
+Description=StreamSnatcher - P2P File Transfer
+After=network.target
+
+[Service]
+Type=simple
+User=streamsnatcher
+Group=streamsnatcher
+WorkingDirectory=/opt/streamsnatcher
+Environment="PATH=/opt/streamsnatcher/venv/bin:/usr/bin"
+EnvironmentFile=/opt/streamsnatcher/.env.production
+ExecStart=/opt/streamsnatcher/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/streamsnatcher /var/log
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

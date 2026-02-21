@@ -1,0 +1,714 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "StreamSnatcher",
+    "url": "https://streamsnatcher.com",
+    "description": "Lightning-fast peer-to-peer file transfer powered by WebRTC. Send files of any size directly between devices—no uploads, no cloud storage, no registration.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section margin-top">
+    <div class="hero-background">
+        <div class="hero-gradient gradient-1"></div>
+        <div class="hero-gradient gradient-2"></div>
+        <div class="hero-gradient gradient-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>P2P File Transfer</span>
+        </div>
+
+        <h1 class="hero-title">
+            Transfer Files at
+            <span class="gradient-text">Lightning Speed</span>
+        </h1>
+
+        <p class="hero-description">
+            Direct device-to-device file transfers. No cloud storage required.
+            Experience true peer-to-peer file transfers with zero storage, zero limits, and maximum privacy.
+            Powered by cutting-edge WebRTC technology.
+        </p>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">File Size Limit</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <div class="stat-number">0%</div>
+                <div class="stat-label">Server Storage</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Max Peers</div>
+            </div>
+        </div>
+
+        <div class="hero-cta">
+            <button id="hero-create-btn" class="btn btn-hero">
+                <span>Start Transfer</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Floating Cards Animation -->
+        <div class="floating-cards">
+            <div class="float-card card-1">
+                <div class="card-icon">📄</div>
+                <div class="card-text">document.pdf</div>
+                <div class="card-size">2.4 MB</div>
+            </div>
+            <div class="float-card card-2">
+                <div class="card-icon">🎬</div>
+                <div class="card-text">video.mp4</div>
+                <div class="card-size">124 MB</div>
+            </div>
+            <div class="float-card card-3">
+                <div class="card-icon">🎵</div>
+                <div class="card-text">music.mp3</div>
+                <div class="card-size">8.2 MB</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Visualization -->
+    <div class="network-visualization">
+        <svg class="network-svg" viewBox="0 0 800 600">
+            <g class="nodes">
+                <circle class="node node-center" cx="400" cy="300" r="20" />
+                <circle class="node node-peer" cx="250" cy="200" r="15" />
+                <circle class="node node-peer" cx="550" cy="200" r="15" />
+                <circle class="node node-peer" cx="250" cy="400" r="15" />
+                <circle class="node node-peer" cx="550" cy="400" r="15" />
+                <circle class="node node-peer" cx="400" cy="150" r="15" />
+            </g>
+            <g class="connections">
+                <line class="connection" x1="400" y1="300" x2="250" y2="200" />
+                <line class="connection" x1="400" y1="300" x2="550" y2="200" />
+                <line class="connection" x1="400" y1="300" x2="250" y2="400" />
+                <line class="connection" x1="400" y1="300" x2="550" y2="400" />
+                <line class="connection" x1="400" y1="300" x2="400" y2="150" />
+            </g>
+        </svg>
+    </div>
+</section>
+
+<!-- Session Interface -->
+<div class="container">
+    <!-- Session Start Card -->
+    <div id="session-start" class="card session-card hidden">
+        <div class="session-icon">🚀</div>
+        <h3>Ready to Transfer?</h3>
+        <p>Create a secure session and share with another peer</p>
+        <button id="create-session-btn" class="btn btn-primary">Create Session</button>
+    </div>
+
+    <!-- Session Active -->
+    <section id="session-active" class="session-screen hidden">
+        <!-- Session Header -->
+        <div class="session-header">
+            <div class="session-header-left">
+                <div class="session-status-badge active">
+                    <span class="status-pulse"></span>
+                    <span class="status-text">Session Active</span>
+                </div>
+            </div>
+            <div class="session-header-right">
+                <button id="reconnect-btn" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>
+                    Reconnect
+                </button>
+                <button id="terminate-btn" class="btn btn-danger">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                    End Session
+                </button>
+            </div>
+        </div>
+
+        <!-- Waiting State -->
+        <div id="waiting-state" class="session-content-grid">
+            <!-- Share Session Card -->
+            <div class="session-card share-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" />
+                        </svg>
+                    </div>
+                    <h3>Share this session</h3>
+                </div>
+
+                <div class="qr-container">
+                    <div class="qr-wrapper">
+                        <div id="qr-code-display" class="qr-code"></div>
+                    </div>
+                    <p class="qr-instruction">Scan with mobile device</p>
+                </div>
+
+                <div class="link-share-section">
+                    <label for="session-url">Session Link</label>
+                    <div class="input-group">
+                        <input type="text" id="session-url" readonly class="session-url-input">
+                        <button id="copy-url-btn" class="btn btn-copy">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="share-tips">
+                    <div class="tip-item">
+                        <span class="tip-icon">💡</span>
+                        <span>Anyone with this link can join and transfer files</span>
+                    </div>
+                    <div class="tip-item">
+                        <span class="tip-icon">🔒</span>
+                        <span>Share only with trusted recipients</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Status Card -->
+            <div class="session-card status-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                        </svg>
+                    </div>
+                    <h3>Connection Status</h3>
+                </div>
+
+                <div class="connection-status-display">
+                    <div class="connection-indicator">
+                        <div class="connection-icon">
+                            <div class="connection-ring"></div>
+                            <div class="connection-dot"></div>
+                        </div>
+                        <div class="connection-info">
+                            <div id="status-text" class="status-message">Waiting for peers...</div>
+                            <div class="peer-details">
+                                <span id="peer-count-display">0 peers connected</span>
+                                <span class="separator">•</span>
+                                <span>Maximum 2 peers per session</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Session Duration</div>
+                        <div class="stat-value" id="session-duration">00:00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Files Transferred</div>
+                        <div class="stat-value" id="files-count">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Data</div>
+                        <div class="stat-value" id="total-data">0 MB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connected State -->
+        <div id="connected-state" class="connected-layout hidden">
+            <div class="main-transfer-layout">
+                <!-- Main Content -->
+                <div class="transfer-main-content">
+                    <!-- File Drop Zone -->
+                    <div class="file-upload-section-large">
+                        <div class="upload-zone-large" id="upload-zone">
+                            <div class="upload-icon-large">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <h3 class="upload-title">Drop files here to transfer</h3>
+                            <p class="upload-text">or click to browse your files</p>
+                            <p class="upload-subtext">Supports all file types • Unlimited size • Multiple files
+                            </p>
+                            <input type="file" id="file-input" multiple hidden>
+                        </div>
+                    </div>
+
+                    <!-- File Queue -->
+                    <div class="file-queue-section">
+                        <div class="section-header-inline">
+                            <h4>📦 File Queue</h4>
+                            <span id="queue-count" class="queue-badge">0</span>
+                        </div>
+                        <div id="file-list" class="file-list">
+                            <p class="file-list-empty">No files in queue</p>
+                        </div>
+                    </div>
+
+                    <!-- Transfer History -->
+                    <div class="transfer-history-section">
+                        <div class="section-header-inline">
+                            <h4>📊 Transfer History</h4>
+                        </div>
+                        <div id="history-list" class="history-list">
+                            <p class="history-list-empty">No transfers yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="transfer-sidebar">
+                    <!-- Share Session Card -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="18" cy="5" r="3" />
+                                <circle cx="6" cy="12" r="3" />
+                                <circle cx="18" cy="19" r="3" />
+                                <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" />
+                            </svg>
+                            <h4>Share Session</h4>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <button id="show-qr-modal" class="btn-show-qr">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                </svg>
+                                <span>Show QR Code</span>
+                            </button>
+                            <div class="link-share-compact">
+                                <input type="text" id="session-url-sidebar" readonly class="session-link-mini"
+                                    aria-label="Session Link">
+                                <button id="copy-url-sidebar" class="btn-icon-mini" title="Copy Link">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="share-note">Anyone with this link can join and transfer files</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Card -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <h4>Statistics</h4>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <div class="stats-grid">
+                                <div class="stat-mini">
+                                    <div class="stat-label">Duration</div>
+                                    <div id="sidebar-duration" class="stat-value">00:00</div>
+                                </div>
+                                <div class="stat-mini">
+                                    <div class="stat-label">Files</div>
+                                    <div id="sidebar-files" class="stat-value">0</div>
+                                </div>
+                                <div class="stat-mini">
+                                    <div class="stat-label">Data</div>
+                                    <div id="sidebar-data" class="stat-value">0 B</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- QR Code Modal -->
+        <div id="qr-modal" class="qr-modal hidden">
+            <div class="qr-modal-overlay"></div>
+            <div class="qr-modal-content">
+                <div class="qr-modal-header">
+                    <h3>Share This Session</h3>
+                    <button id="close-qr-modal" class="btn-close-modal" aria-label="Close QR Modal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="qr-modal-body">
+                    <div class="qr-display-large">
+                        <div id="qr-code-modal"></div>
+                    </div>
+                    <p class="qr-scan-instruction">Scan with mobile device to join session</p>
+                    <div class="modal-link-section">
+                        <label for="session-url-modal">Or share this link:</label>
+                        <div class="modal-input-group">
+                            <input type="text" id="session-url-modal" readonly class="modal-url-input">
+                            <button id="copy-url-modal" class="btn btn-primary">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                                </svg>
+                                Copy Link
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Feature Showcase -->
+<section class="features-showcase">
+    <div class="section-header">
+        <h2>Why Choose StreamSnatcher?</h2>
+        <p>Built for speed, privacy, and simplicity</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🔒</div>
+            </div>
+            <h3>Secure & Private</h3>
+            <p>End-to-end encrypted connections. Your files never touch our servers - they go directly between
+                devices.</p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">⚡</div>
+            </div>
+            <h3>Lightning Fast</h3>
+            <p>Unthrottled transfer speeds limited only by your internet connection. No artificial speed caps.
+            </p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🌐</div>
+            </div>
+            <h3>No Limits</h3>
+            <p>Transfer files of any size and type. No restrictions, no file caps, no premium tiers.</p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">👥</div>
+            </div>
+            <h3>Multi-Peer Support</h3>
+            <p>Share files with multiple peers simultaneously in the same session.</p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🚫</div>
+            </div>
+            <h3>Zero Storage</h3>
+            <p>We don't store anything. Ever. Files stream directly between peers without touching our
+                infrastructure.</p>
+        </div>
+
+        <div class="feature-box">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🆓</div>
+            </div>
+            <h3>Completely Free</h3>
+            <p>No hidden fees, no premium plans. StreamSnatcher is and always will be free for everyone.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== What Is WebRTC? ===== -->
+<section class="features-showcase">
+    <div class="section-header">
+        <h2>What Is WebRTC?</h2>
+        <p>The open standard that makes browser‑to‑browser file transfer possible</p>
+    </div>
+    <div class="content-container" style="text-align:left">
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--text-secondary);margin-bottom:1.5rem">
+            <strong>WebRTC (Web Real‑Time Communication)</strong> is an open‑source framework maintained by the W3C and
+            IETF that lets browsers exchange data directly—no plugins, no installs, and no intermediate servers handling
+            your files. Originally designed for voice and video calls, WebRTC's <em>data‑channel API</em> is equally
+            powerful for transferring arbitrary binary data such as documents, images, and videos at full network speed.
+        </p>
+
+        <h3 style="font-size:1.4rem;color:var(--accent-primary);margin:2rem 0 1rem">How StreamSnatcher Uses WebRTC</h3>
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--text-secondary);margin-bottom:1.5rem">
+            When you start a session, StreamSnatcher's signaling server helps the two browsers discover each other by
+            exchanging small <strong>SDP (Session Description Protocol)</strong> messages and <strong>ICE
+                candidates</strong>. Once connectivity is established, the signaling server steps aside and all file
+            data flows through a peer‑to‑peer data channel secured with <strong>DTLS 1.2+ encryption</strong>. Because
+            bytes travel directly between devices, transfer speeds are limited only by your network connection—not by a
+            cloud provider's bandwidth caps.
+        </p>
+
+        <h3 style="font-size:1.4rem;color:var(--accent-primary);margin:2rem 0 1rem">NAT Traversal: Reaching Peers Behind
+            Firewalls</h3>
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--text-secondary);margin-bottom:1.5rem">
+            Most devices sit behind NATs or firewalls that block inbound connections. WebRTC overcomes this using the
+            <strong>ICE framework</strong>, which gathers connection candidates via <strong>STUN</strong> (Session
+            Traversal Utilities for NAT) servers. If a direct path cannot be found—for example when both peers are
+            behind symmetric NATs—traffic is relayed through a <strong>TURN</strong> (Traversal Using Relays around NAT)
+            server. Even relayed transfers remain encrypted end‑to‑end, so the relay never sees the plaintext contents
+            of your files.
+        </p>
+
+        <h3 style="font-size:1.4rem;color:var(--accent-primary);margin:2rem 0 1rem">Why This Matters for Privacy</h3>
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--text-secondary);margin-bottom:1.5rem">
+            Traditional file‑sharing services upload your data to a central server, where it may be scanned, indexed, or
+            stored indefinitely. With WebRTC, <strong>your files never leave the direct path between your browser and
+                your peer's browser</strong>. StreamSnatcher's server facilitates the initial handshake but never
+            receives, stores, or has access to the transferred content. This architecture means there is nothing to
+            breach, subpoena, or accidentally leak—privacy is guaranteed by design, not by policy.
+        </p>
+
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--text-secondary);margin-bottom:1.5rem">
+            Want to learn more? Read our in‑depth <a href="/blog/webrtc-file-transfer-guide">WebRTC File Transfer
+                Guide</a> or explore <a href="/how-it-works">How StreamSnatcher Works</a>.
+        </p>
+    </div>
+</section>
+
+<!-- What You Can Do -->
+<section class="features-showcase">
+    <div class="section-header">
+        <h2>What you can do</h2>
+        <p>Practical ways to use StreamSnatcher for instant, private, browser‑to‑browser sharing without server
+            storage.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">📸</span></div>
+            <h3>Personal media</h3>
+            <p>Send full‑resolution photos and videos to friends and family without compression or cloud links.
+            </p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🧪</span></div>
+            <h3>Team handoffs</h3>
+            <p>Share design assets, builds, and drafts in real time during standups or review sessions.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🏫</span></div>
+            <h3>Study groups</h3>
+            <p>Distribute handouts or project files to a small group instantly and privately.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">📽️</span></div>
+            <h3>On‑site swaps</h3>
+            <p>Move footage and large assets between devices on location without waiting for uploads.</p>
+        </div>
+    </div>
+    <p style="text-align:center;margin-top:1.5rem">
+        Explore more on the <a href="/use-cases">Use Cases</a> page.
+    </p>
+</section>
+
+<!-- Privacy and Security -->
+<section class="features-showcase">
+    <div class="section-header">
+        <h2>Privacy and security</h2>
+        <p>Stream directly between devices over encrypted channels—no file storage, no indexing, and minimal
+            technical metadata.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🔐</span></div>
+            <h3>Encrypted in transit</h3>
+            <p>Transfers use secure data channels so contents remain private between participating browsers.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🗄️</span></div>
+            <h3>No server storage</h3>
+            <p>Files never upload to servers; when the session ends, the platform retains nothing to fetch or
+                erase.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🧯</span></div>
+            <h3>Minimal metadata</h3>
+            <p>Only essential, short‑lived session data is used to establish connectivity and improve
+                reliability.</p>
+        </div>
+    </div>
+    <p style="text-align:center;margin-top:1.5rem">
+        Read more in the <a href="/privacy-policy">Privacy Policy</a> and <a href="/disclaimer">Disclaimer</a>.
+    </p>
+</section>
+
+<!-- Quick Answers -->
+<section class="features-showcase">
+    <div class="section-header">
+        <h2>Quick answers</h2>
+        <p>Common questions about speed, reliability, compatibility, and getting the best results across devices
+            and networks.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">⚡</span></div>
+            <h3>How fast is it?</h3>
+            <p>Throughput depends on peer bandwidth and device performance; direct routes are fastest, relays
+                may be slower.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🛡️</span></div>
+            <h3>Is it secure?</h3>
+            <p>Transfers are encrypted and device‑to‑device; the platform does not store or inspect file
+                contents.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">🌐</span></div>
+            <h3>Which browsers work?</h3>
+            <p>Modern browsers with WebRTC support; keep them updated and avoid overly restrictive network
+                policies.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon-wrapper"><span class="feature-icon">❓</span></div>
+            <h3>Need more help?</h3>
+            <p>Visit the <a href="/faq">FAQ</a> or send details through the <a href="/contact">Contact</a> page
+                for targeted assistance.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Optional ad slot -->
+<div class="ad-container ad-horizontal" aria-label="Advertisement"></div>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Simple, fast, secure</p>
+    </div>
+
+    <div class="steps-container">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h4>Create Session</h4>
+                <p>Click 'Create Session' to generate a unique transfer link and QR code</p>
+            </div>
+        </div>
+
+        <div class="step-arrow">→</div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h4>Share Link</h4>
+                <p>Send the link or QR code to the people you want to share files with</p>
+            </div>
+        </div>
+
+        <div class="step-arrow">→</div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h4>Connect</h4>
+                <p>Peers connect automatically using secure WebRTC technology</p>
+            </div>
+        </div>
+
+        <div class="step-arrow">→</div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h4>Transfer</h4>
+                <p>Drag and drop files - they transfer directly at maximum speed</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="cta-container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Transfer Files at Lightning Speed?</h2>
+            <p class="cta-description">
+                No registration. No limits. No storage. Just pure peer-to-peer file transfer.
+            </p>
+            <div class="cta-features">
+                <div class="cta-feature">
+                    <span class="cta-icon">🔒</span>
+                    <span>End-to-End Privacy</span>
+                </div>
+                <div class="cta-feature">
+                    <span class="cta-icon">∞</span>
+                    <span>Unlimited Size</span>
+                </div>
+                <div class="cta-feature">
+                    <span class="cta-icon">👥</span>
+                    <span>Multi-Peer</span>
+                </div>
+            </div>
+            <button id="cta-start-btn" class="btn btn-cta">
+                <span>Start Transferring Now</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </button>
+            <p class="cta-note">✨ Free forever • No account needed • Works instantly</p>
+        </div>
+
+        <div class="cta-bg-decoration">
+            <div class="cta-circle circle-1"></div>
+            <div class="cta-circle circle-2"></div>
+            <div class="cta-circle circle-3"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/app.js?v={{ timestamp }}"></script>
+{% endblock %}

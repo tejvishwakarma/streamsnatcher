@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block extra_schema %}{% endblock %}
+
+{% block content %}
+<main class="marketing-page">
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1 class="page-title">Privacy Policy</h1>
+    <p class="page-subtitle">
+      This policy explains what information is and is not processed when using StreamSnatcher, a peer‑to‑peer file
+      transfer service that keeps files off servers and enables encrypted, direct connections between participants.
+    </p>
+  </section>
+
+  <div class="content-container">
+
+    <!-- Overview -->
+    <section class="content-section">
+      <h2>Overview</h2>
+      <p>
+        StreamSnatcher is designed for privacy by default: files are shared directly between devices over encrypted
+        WebRTC data channels, and the service does not upload or store transferred files on servers.
+      </p>
+      <p>
+        Only minimal, temporary technical data necessary to establish and maintain a session may be processed during
+        active connections, and it is discarded when the session ends or shortly thereafter.
+      </p>
+      <p>
+        This policy applies to the website and related features available through the StreamSnatcher interface.
+      </p>
+      <p class="text-sm text-muted">
+        Last updated: 8 February 2026.
+      </p>
+    </section>
+
+    <!-- Scope -->
+    <section class="content-section">
+      <h2>Scope</h2>
+      <p>
+        This policy covers information processed through the website’s peer‑to‑peer transfer features, support forms,
+        and analytics or advertising integrations used to operate and improve the service.
+      </p>
+      <p>
+        It does not cover third‑party websites or services that may be linked from the interface, which are governed by
+        their own policies.
+      </p>
+    </section>
+
+    <!-- What we do not collect -->
+    <section class="content-section">
+      <h2>What we do not collect</h2>
+      <ul>
+        <li>Files transferred through StreamSnatcher are not uploaded to or stored on servers.</li>
+        <li>No persistent profiles or accounts are required to use the service.</li>
+        <li>No content of your files is inspected or indexed by the platform.</li>
+      </ul>
+    </section>
+
+    <!-- Information we may process -->
+    <section class="content-section">
+      <h2>Information we may process</h2>
+      <p>
+        To establish and maintain a connection, participating browsers exchange technical details such as session
+        descriptions and ICE candidates to negotiate network paths.
+      </p>
+      <ul>
+        <li>Session metadata: ephemeral identifiers, room codes, and timing signals for live sessions.
+        </li>
+        <li>Connectivity data: IP candidates and transport details used for NAT traversal and reliable delivery.</li>
+        <li>Diagnostics: limited, short‑lived error or performance indicators to improve stability and support.</li>
+        <li>Usage analytics: aggregated, non‑content metrics to understand feature usage and quality.
+        </li>
+      </ul>
+      <p>
+        These elements exist to provide the service and are not used to build personal profiles.
+      </p>
+    </section>
+
+    <!-- Cookies and local storage -->
+    <section class="content-section">
+      <h2>Cookies and local storage</h2>
+      <p>
+        StreamSnatcher uses cookies and similar technologies for core functionality, preferences, performance
+        measurement, and to support advertising where enabled.
+      </p>
+      <ul>
+        <li>Essential: session continuity, room state, and security features that keep transfers working.</li>
+        <li>Preferences: UI choices such as theme or recent settings to improve usability.</li>
+        <li>Analytics: anonymized metrics to understand reliability and guide improvements.</li>
+        <li>Advertising: signals required to measure and display ads in compliance with user consent.
+        </li>
+      </ul>
+      <p>
+        Consent preferences can be managed through the on‑site banner or your browser settings, and ads or analytics in
+        applicable regions will respect those choices.
+      </p>
+    </section>
+
+    <!-- How we use information -->
+    <section class="content-section">
+      <h2>How we use information</h2>
+      <ul>
+        <li>Provide the service: set up secure sessions and move data between peers.</li>
+        <li>Reliability and performance: diagnose connectivity issues and optimize chunking and transport.</li>
+        <li>Safety and integrity: detect misuse patterns to protect participants and the platform.</li>
+        <li>Measurement: understand feature adoption and improve usability without reading file contents.</li>
+      </ul>
+    </section>
+
+    <!-- Sharing and third parties -->
+    <section class="content-section">
+      <h2>Sharing and third parties</h2>
+      <p>
+        Peer‑to‑peer connections rely on standard WebRTC signaling and STUN/TURN services to negotiate secure paths;
+        these services see limited technical metadata necessary for connectivity, not the contents of files.
+      </p>
+      <p>
+        Where analytics or advertising are integrated, participating vendors may process limited identifiers and events
+        to measure usage or deliver ads, subject to consent in applicable regions.
+      </p>
+      <p>
+        StreamSnatcher does not sell personal information and does not share file contents with third parties.
+      </p>
+    </section>
+
+    <!-- Data retention and deletion -->
+    <section class="content-section">
+      <h2>Data retention and deletion</h2>
+      <p>
+        Session‑level technical data exists only for the duration of active connections and is discarded when the
+        session ends.
+      </p>
+      <p>
+        Limited diagnostics and analytics may be retained for short periods to improve stability, detect abuse, and meet
+        operational needs, after which they are automatically deleted or de‑identified.
+      </p>
+    </section>
+
+    <!-- Your choices and controls -->
+    <section class="content-section">
+      <h2>Your choices and controls</h2>
+      <ul>
+        <li>Browser controls: block or clear cookies and site data using your browser’s privacy settings.</li>
+        <li>Consent management: adjust ad and analytics preferences via the on‑site consent banner where required.</li>
+        <li>Session control: closing the page ends connections and clears session‑tied data.</li>
+        <li>Questions: visit the <a href="/contact">Contact</a> page for assistance or requests related to this policy.</li>
+      </ul>
+    </section>
+
+    <!-- Children’s use -->
+    <section class="content-section">
+      <h2>Children’s use</h2>
+      <p>
+        The service is intended for users aged 13 and older and does not knowingly allow younger users to create
+        sessions.
+      </p>
+    </section>
+
+    <!-- Security -->
+    <section class="content-section">
+      <h2>Security</h2>
+      <div class="security-points">
+        <div class="security-point">
+          <div class="security-icon">🔐</div>
+          <h4>Encryption in transit</h4>
+          <p>Transfers occur over DTLS‑encrypted WebRTC data channels to help protect contents from interception.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🗄️</div>
+          <h4>No server file storage</h4>
+          <p>Files remain device‑to‑device and are not stored by the platform.</p>
+        </div>
+        <div class="security-point">
+          <div class="security-icon">🧯</div>
+          <h4>Minimal operational data</h4>
+          <p>Only the least amount of technical metadata required to establish and maintain sessions is used.</p>
+        </div>
+      </div>
+      <p>
+        No security measure is perfect, but the architecture minimizes exposure by avoiding server‑side file storage and
+        limiting data collection.
+      </p>
+    </section>
+
+    <!-- International processing -->
+    <section class="content-section">
+      <h2>International processing</h2>
+      <p>
+        Third‑party services used for connectivity, analytics, or advertising may process limited data across regions;
+        appropriate safeguards and consent controls are applied where required.
+      </p>
+    </section>
+
+    <!-- Changes to this policy -->
+    <section class="content-section">
+      <h2>Changes to this policy</h2>
+      <p>
+        This policy may be updated to reflect product or regulatory changes, and a revised date will be posted when
+        updates occur.
+      </p>
+    </section>
+
+    <!-- Contact -->
+    <section class="content-section">
+      <h2>Contact</h2>
+      <p>
+        For privacy questions or requests, please visit the <a href="/contact">Contact</a> page.
+      </p>
+    </section>
+
+  </div>
+</main>
+{% endblock %}
