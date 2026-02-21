@@ -13,11 +13,8 @@ ExecStart=/home/streamsnatcher/htdocs/streamsnatcher.com/venv/bin/uvicorn app.ma
 Restart=always
 RestartSec=5
 
-# Security hardening
+# Security hardening (compatible with container-based VPS)
 NoNewPrivileges=yes
-ProtectSystem=strict
-ReadWritePaths=/home/streamsnatcher/htdocs/streamsnatcher.com /var/log/streamsnatcher-deploy.log
-PrivateTmp=yes
 
 [Install]
 WantedBy=multi-user.target
