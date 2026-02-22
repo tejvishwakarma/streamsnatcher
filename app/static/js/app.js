@@ -1483,8 +1483,12 @@ async function completeFileReceive(fileId, fileData) {
             downloadBtn.addEventListener('click', async () => {
                 console.log('📥 Download clicked for:', fileData.name);
 
-                // Try navigator.share first (works on iOS Safari)
-                if (navigator.share && navigator.canShare) {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+                // On iOS, <a download> doesn't work — must use navigator.share()
+                // On Android/desktop, <a download> is reliable and handles any file size
+                if (isIOS && navigator.share && navigator.canShare) {
                     try {
                         const file = new File([blob], fileData.name, { type: blob.type });
                         if (navigator.canShare({ files: [file] })) {
@@ -1504,24 +1508,19 @@ async function completeFileReceive(fileId, fileData) {
                             return;
                         }
                     } catch (shareErr) {
-                        if (shareErr.name === 'AbortError') return; // User cancelled share
-                        console.warn('Share failed, trying download link:', shareErr.message);
+                        if (shareErr.name === 'AbortError') return; // User cancelled
+                        console.warn('Share failed:', shareErr.message);
                     }
                 }
 
-                // Fallback: <a download> (works on desktop browsers)
-                try {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileData.name;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(() => a.remove(), 1000);
-                } catch (err) {
-                    // Last resort: open in new tab
-                    window.open(url, '_blank');
-                }
+                // Standard download via <a download> (Android Chrome, desktop browsers)
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileData.name;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => a.remove(), 1000);
 
                 addToHistory(fileData.name, fileData.size, 'received');
                 setTimeout(() => {
