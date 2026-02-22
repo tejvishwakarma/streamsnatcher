@@ -2,7 +2,7 @@
 const CHUNK_SIZE = 262144; // 256KB chunks (larger = fewer messages = faster)
 const MAX_BUFFER_AMOUNT = 4194304; // 4MB high water mark
 const LOW_BUFFER_THRESHOLD = 524288; // 512KB low water mark
-const MERGE_THRESHOLD = 33554432; // 32MB — merge chunks into Blob to free ArrayBuffer memory
+const SW_STREAMING_SUPPORTED = 'serviceWorker' in navigator; // Use SW for zero-RAM downloads
 const MAX_PEERS = 2;
 const ICE_SERVERS = [
     // STUN servers (free, for NAT discovery)
@@ -1095,29 +1095,31 @@ async function handleFileMetadata(metadata, peerId) {
         size,
         mimeType: mimeType || 'application/octet-stream',
         chunks: [],
-        mergedBlobs: [],
-        pendingChunkSize: 0,
         receivedSize: 0,
         progress: 0,
         writable: null,
-        streamingToDisk: false
+        streamingToDisk: false,
+        swStreaming: false  // Service Worker streaming mode
     };
-
-    // Warn iOS users about large files (no File System Access API)
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (isIOS && size > 1024 * 1024 * 1024) {
-        console.warn('⚠️ Large file on iOS — memory may be limited');
-    }
 
     receivingFiles.set(fileId, fileEntry);
     addReceivingFileToUI(fileId, name, size);
 
-    // Show accept modal — user MUST click to trigger Save As (browser requires user gesture)
+    // Choose disk-streaming strategy:
+    // 1. showSaveFilePicker (Chrome/Edge) — user picks save location
+    // 2. Service Worker streaming (Safari/Firefox) — auto-downloads to disk
+    // 3. In-memory fallback (no SW, no File System API)
+
     if ('showSaveFilePicker' in window) {
+        // Desktop Chrome/Edge: show Save As dialog
         const accepted = await showFileAcceptModal(fileId, name, size, mimeType, fileEntry);
         if (!accepted) {
-            console.log('⚠️ User skipped save dialog — using in-memory mode');
+            console.log('⚠️ User skipped save dialog — trying SW streaming');
+            await initStreamDownload(fileId, name, mimeType, size, fileEntry);
         }
+    } else {
+        // Safari/Firefox/mobile: use Service Worker streaming
+        await initStreamDownload(fileId, name, mimeType, size, fileEntry);
     }
 
     // Tell sender we're ready to receive chunks
@@ -1131,6 +1133,56 @@ async function handleFileMetadata(metadata, peerId) {
         }
     }
     console.log('✓ Sent ready-to-receive signal');
+}
+
+// Initialize Service Worker streaming download (zero RAM)
+async function initStreamDownload(fileId, filename, mimeType, size, fileEntry) {
+    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+        console.warn('⚠️ No active Service Worker — falling back to in-memory mode');
+        return;
+    }
+
+    try {
+        // Tell SW to create a ReadableStream for this download
+        navigator.serviceWorker.controller.postMessage({
+            type: 'INIT_DOWNLOAD',
+            fileId,
+            filename,
+            mimeType: mimeType || 'application/octet-stream',
+            size
+        });
+
+        // Wait for SW to acknowledge the stream is ready
+        await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                navigator.serviceWorker.removeEventListener('message', handler);
+                reject(new Error('SW stream init timeout'));
+            }, 5000);
+
+            function handler(event) {
+                if (event.data.type === 'DOWNLOAD_READY' && event.data.fileId === fileId) {
+                    clearTimeout(timeout);
+                    navigator.serviceWorker.removeEventListener('message', handler);
+                    resolve();
+                }
+            }
+            navigator.serviceWorker.addEventListener('message', handler);
+        });
+
+        // Trigger the download by opening the SW-intercepted URL in a hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.hidden = true;
+        iframe.style.display = 'none';
+        iframe.src = `/sw-download/${fileId}`;
+        document.body.appendChild(iframe);
+
+        fileEntry.swStreaming = true;
+        fileEntry.swIframe = iframe;
+        console.log(`✓ SW streaming download initiated for: ${filename}`);
+
+    } catch (err) {
+        console.warn('⚠️ SW streaming failed, falling back to in-memory:', err.message);
+    }
 }
 
 function showFileAcceptModal(fileId, name, size, mimeType, fileEntry) {
@@ -1244,25 +1296,22 @@ function handleFileChunk(arrayBuffer, peerId) {
             fileData.receivedSize += arrayBuffer.byteLength;
 
             if (fileData.streamingToDisk && fileData.writable) {
-                // Stream directly to disk — no RAM accumulation
+                // Mode 1: File System Access API — stream to disk
                 fileData.writable.write(new Blob([arrayBuffer])).catch(err => {
                     console.error('❌ Disk write failed:', err);
                     fileData.streamingToDisk = false;
                     fileData.chunks.push(arrayBuffer);
-                    fileData.pendingChunkSize += arrayBuffer.byteLength;
                 });
+            } else if (fileData.swStreaming && navigator.serviceWorker.controller) {
+                // Mode 2: Service Worker streaming — pipe to SW (zero RAM)
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'DOWNLOAD_CHUNK',
+                    fileId,
+                    chunk: arrayBuffer
+                }, [arrayBuffer]); // Transfer ownership — zero-copy
             } else {
-                // Accumulate in memory with periodic merging
+                // Mode 3: In-memory fallback
                 fileData.chunks.push(arrayBuffer);
-                fileData.pendingChunkSize += arrayBuffer.byteLength;
-
-                // Merge chunks into intermediate Blob every 32MB to free ArrayBuffer memory
-                if (fileData.pendingChunkSize >= MERGE_THRESHOLD) {
-                    const mergedBlob = new Blob(fileData.chunks, { type: 'application/octet-stream' });
-                    fileData.mergedBlobs.push(mergedBlob);
-                    fileData.chunks = []; // Free all ArrayBuffer references
-                    fileData.pendingChunkSize = 0;
-                }
             }
 
             const progress = Math.round((fileData.receivedSize / fileData.size) * 100);
@@ -1337,10 +1386,59 @@ async function completeFileReceive(fileId, fileData) {
         return;
     }
 
+    if (fileData.swStreaming) {
+        // ============ SW STREAMING MODE: File downloaded via Service Worker ============
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'DOWNLOAD_DONE',
+                fileId
+            });
+        }
+
+        // Clean up hidden iframe
+        if (fileData.swIframe) {
+            setTimeout(() => fileData.swIframe.remove(), 3000);
+        }
+
+        console.log(`✓ File streamed to disk: ${fileData.name} (${formatFileSize(fileData.receivedSize)})`);
+        receivingFiles.delete(fileId);
+
+        if (fileElement) {
+            const statusEl = fileElement.querySelector('.file-status');
+            if (statusEl) {
+                statusEl.textContent = '✓ Downloaded';
+                statusEl.style.color = 'var(--success)';
+            }
+
+            const progressBar = fileElement.querySelector('.file-progress');
+            if (progressBar) progressBar.remove();
+
+            const saveToBtn = fileElement.querySelector(`#save-to-${fileId}`);
+            if (saveToBtn) saveToBtn.remove();
+
+            const actionsDiv = fileElement.querySelector('.file-actions');
+            if (actionsDiv) {
+                const doneLabel = document.createElement('span');
+                doneLabel.className = 'btn-download';
+                doneLabel.style.opacity = '0.6';
+                doneLabel.style.pointerEvents = 'none';
+                doneLabel.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    Downloaded ✓
+                `;
+                actionsDiv.appendChild(doneLabel);
+            }
+        }
+
+        addToHistory(fileData.name, fileData.size, 'received');
+        updateSessionStats(fileData.size);
+        return;
+    }
+
     // ============ IN-MEMORY MODE: Create blob and offer download ============
-    // Combine intermediate merged blobs with any remaining chunks
-    const blobParts = [...(fileData.mergedBlobs || []), ...fileData.chunks];
-    const blob = new Blob(blobParts, { type: fileData.mimeType || 'application/octet-stream' });
+    const blob = new Blob(fileData.chunks, { type: fileData.mimeType || 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
 
     console.log(`✓ File received (in-memory): ${fileData.name} — Blob: ${formatFileSize(blob.size)}`);
@@ -1353,7 +1451,6 @@ async function completeFileReceive(fileId, fileData) {
     };
     receivingFiles.delete(fileId);
     fileData.chunks = null; // Free chunk memory
-    fileData.mergedBlobs = null; // Free merged blob references
 
     if (fileElement) {
         const statusEl = fileElement.querySelector('.file-status');
@@ -1769,6 +1866,17 @@ function cancelTransfer(fileId) {
 }
 
 function handleCancelTransfer(fileId) {
+    const fileData = receivingFiles.get(fileId);
+
+    // Abort SW streaming download if active
+    if (fileData && fileData.swStreaming && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            type: 'DOWNLOAD_ABORT',
+            fileId
+        });
+        if (fileData.swIframe) fileData.swIframe.remove();
+    }
+
     receivingFiles.delete(fileId);
     const fileElement = document.getElementById(`file-${fileId}`);
     if (fileElement) fileElement.remove();
