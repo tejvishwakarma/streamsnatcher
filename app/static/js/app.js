@@ -1471,33 +1471,71 @@ async function completeFileReceive(fileId, fileData) {
             const cancelBtn = actionsDiv.querySelector('.btn-cancel');
             if (cancelBtn) cancelBtn.remove();
 
-            // Native <a> download link
-            const downloadLink = document.createElement('a');
-            downloadLink.href = url;
-            downloadLink.download = fileData.name;
-            downloadLink.className = 'btn-download';
-            downloadLink.style.textDecoration = 'none';
-            downloadLink.innerHTML = `
+            // Download button (iOS-compatible)
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn-download';
+            downloadBtn.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
                 </svg>
                 Download
             `;
-            downloadLink.addEventListener('click', () => {
-                console.log('📥 Download link clicked for:', fileData.name);
+            downloadBtn.addEventListener('click', async () => {
+                console.log('📥 Download clicked for:', fileData.name);
+
+                // Try navigator.share first (works on iOS Safari)
+                if (navigator.share && navigator.canShare) {
+                    try {
+                        const file = new File([blob], fileData.name, { type: blob.type });
+                        if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: fileData.name
+                            });
+                            addToHistory(fileData.name, fileData.size, 'received');
+                            downloadBtn.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                                Saved ✓
+                            `;
+                            downloadBtn.style.opacity = '0.6';
+                            downloadBtn.style.pointerEvents = 'none';
+                            return;
+                        }
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') return; // User cancelled share
+                        console.warn('Share failed, trying download link:', shareErr.message);
+                    }
+                }
+
+                // Fallback: <a download> (works on desktop browsers)
+                try {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileData.name;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => a.remove(), 1000);
+                } catch (err) {
+                    // Last resort: open in new tab
+                    window.open(url, '_blank');
+                }
+
                 addToHistory(fileData.name, fileData.size, 'received');
                 setTimeout(() => {
-                    downloadLink.innerHTML = `
+                    downloadBtn.innerHTML = `
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 6L9 17l-5-5"/>
                         </svg>
                         Downloaded
                     `;
-                    downloadLink.style.opacity = '0.6';
-                    downloadLink.style.pointerEvents = 'none';
+                    downloadBtn.style.opacity = '0.6';
+                    downloadBtn.style.pointerEvents = 'none';
                 }, 500);
             });
-            actionsDiv.appendChild(downloadLink);
+            actionsDiv.appendChild(downloadBtn);
         }
     }
 
