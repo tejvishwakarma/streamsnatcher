@@ -2,6 +2,7 @@
 const CHUNK_SIZE = 262144; // 256KB chunks (larger = fewer messages = faster)
 const MAX_BUFFER_AMOUNT = 4194304; // 4MB high water mark
 const LOW_BUFFER_THRESHOLD = 524288; // 512KB low water mark
+const MERGE_THRESHOLD = 33554432; // 32MB — merge chunks into Blob to free ArrayBuffer memory
 const MAX_PEERS = 2;
 const ICE_SERVERS = [
     // STUN servers (free, for NAT discovery)
@@ -1094,11 +1095,19 @@ async function handleFileMetadata(metadata, peerId) {
         size,
         mimeType: mimeType || 'application/octet-stream',
         chunks: [],
+        mergedBlobs: [],
+        pendingChunkSize: 0,
         receivedSize: 0,
         progress: 0,
         writable: null,
         streamingToDisk: false
     };
+
+    // Warn iOS users about large files (no File System Access API)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS && size > 1024 * 1024 * 1024) {
+        console.warn('⚠️ Large file on iOS — memory may be limited');
+    }
 
     receivingFiles.set(fileId, fileEntry);
     addReceivingFileToUI(fileId, name, size);
@@ -1240,10 +1249,20 @@ function handleFileChunk(arrayBuffer, peerId) {
                     console.error('❌ Disk write failed:', err);
                     fileData.streamingToDisk = false;
                     fileData.chunks.push(arrayBuffer);
+                    fileData.pendingChunkSize += arrayBuffer.byteLength;
                 });
             } else {
-                // Fallback: accumulate in memory
+                // Accumulate in memory with periodic merging
                 fileData.chunks.push(arrayBuffer);
+                fileData.pendingChunkSize += arrayBuffer.byteLength;
+
+                // Merge chunks into intermediate Blob every 32MB to free ArrayBuffer memory
+                if (fileData.pendingChunkSize >= MERGE_THRESHOLD) {
+                    const mergedBlob = new Blob(fileData.chunks, { type: 'application/octet-stream' });
+                    fileData.mergedBlobs.push(mergedBlob);
+                    fileData.chunks = []; // Free all ArrayBuffer references
+                    fileData.pendingChunkSize = 0;
+                }
             }
 
             const progress = Math.round((fileData.receivedSize / fileData.size) * 100);
@@ -1319,7 +1338,9 @@ async function completeFileReceive(fileId, fileData) {
     }
 
     // ============ IN-MEMORY MODE: Create blob and offer download ============
-    const blob = new Blob(fileData.chunks, { type: fileData.mimeType || 'application/octet-stream' });
+    // Combine intermediate merged blobs with any remaining chunks
+    const blobParts = [...(fileData.mergedBlobs || []), ...fileData.chunks];
+    const blob = new Blob(blobParts, { type: fileData.mimeType || 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
 
     console.log(`✓ File received (in-memory): ${fileData.name} — Blob: ${formatFileSize(blob.size)}`);
@@ -1332,6 +1353,7 @@ async function completeFileReceive(fileId, fileData) {
     };
     receivingFiles.delete(fileId);
     fileData.chunks = null; // Free chunk memory
+    fileData.mergedBlobs = null; // Free merged blob references
 
     if (fileElement) {
         const statusEl = fileElement.querySelector('.file-status');
